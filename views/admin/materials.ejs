@@ -1,0 +1,269 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active:'materials', role:'admin'}) %>
+  <div class="main-content">
+
+    <div class="page-header">
+      <div>
+        <div class="page-title">📁 Material Manager</div>
+        <div class="page-subtitle">Create folders, organize subfolders, and upload PDFs anywhere</div>
+      </div>
+      <div style="display:flex;gap:.6rem;flex-wrap:wrap;">
+        <button onclick="openModal('newFolderModal')" class="btn btn-secondary btn-sm">📁+ New Folder</button>
+        <button onclick="openModal('uploadModal')" class="btn btn-primary btn-sm">📤 Upload PDF</button>
+      </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="mm-search-wrap">
+      <input type="text" id="mmSearch" class="form-control mm-search-input" placeholder="🔍 Search folders or files...">
+      <div id="mmSearchResults" class="mm-search-results hidden"></div>
+    </div>
+
+    <div class="mm-layout">
+
+      <!-- LEFT: FOLDER TREE -->
+      <aside class="mm-tree">
+        <div class="mm-tree-title">📂 All Folders</div>
+        <a href="/admin/materials" class="mm-tree-item <%= !currentFolderId ? 'active' : '' %>">
+          🏠 <span>Root</span>
+        </a>
+        <div id="mmTreeRoot">
+          <%
+            function renderTree(nodes, depth) {
+          %>
+          <% nodes.forEach(function(node) { %>
+            <a href="/admin/materials?folder=<%= node.id %>" class="mm-tree-item <%= currentFolderId==node.id ? 'active' : '' %>" style="padding-left:<%= 0.9 + depth*0.9 %>rem;">
+              <%= node.icon || '📁' %> <span><%= node.name %></span>
+            </a>
+            <% if(node.children && node.children.length) { renderTree(node.children, depth+1); } %>
+          <% }) %>
+          <%
+            }
+            renderTree(tree, 0);
+          %>
+        </div>
+      </aside>
+
+      <!-- RIGHT: CURRENT FOLDER CONTENTS -->
+      <div class="mm-content">
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+          <a href="/admin/materials">🏠 Root</a>
+          <% breadcrumb.forEach(function(b){ %>
+            <span>/</span>
+            <a href="/admin/materials?folder=<%= b.id %>"><%= b.icon %> <%= b.name %></a>
+          <% }) %>
+        </div>
+
+        <% if(currentFolder) { %>
+        <div class="mm-current-header">
+          <div class="mm-current-title"><%= currentFolder.icon %> <%= currentFolder.name %></div>
+          <div style="display:flex;gap:.5rem;">
+            <button onclick="openRenameModal(<%= currentFolder.id %>, '<%= currentFolder.name.replace(/'/g,"\\'") %>', '<%= (currentFolder.name_bn||'').replace(/'/g,"\\'") %>', '<%= currentFolder.icon %>')" class="btn btn-secondary btn-sm">✏️ Rename</button>
+            <form action="/admin/materials/folder/<%= currentFolder.id %>/delete" method="POST" style="display:inline;">
+              <button class="btn btn-danger btn-sm" data-confirm="Delete this folder and ALL its contents (subfolders + files)?">🗑️ Delete Folder</button>
+            </form>
+          </div>
+        </div>
+        <% } %>
+
+        <!-- Subfolders grid -->
+        <% if(subfolders.length) { %>
+        <div class="mm-section-label">📁 Subfolders (<%= subfolders.length %>)</div>
+        <div class="folder-grid mb-3">
+          <% subfolders.forEach(function(f) { %>
+          <a href="/admin/materials?folder=<%= f.id %>" class="folder-item">
+            <div class="icon"><%= f.icon || '📁' %></div>
+            <div class="name"><%= f.name %></div>
+          </a>
+          <% }) %>
+        </div>
+        <% } %>
+
+        <!-- Files table -->
+        <div class="mm-section-label">📄 PDF Files (<%= files.length %>)</div>
+        <% if(files.length) { %>
+        <div class="table-wrap">
+          <div class="table-scroll">
+          <table>
+            <thead><tr><th>#</th><th>Title</th><th>Subject</th><th>Year</th><th>Size</th><th>Downloads</th><th>Uploader</th><th>Actions</th></tr></thead>
+            <tbody>
+              <% files.forEach(function(m,i){ %>
+              <tr>
+                <td><%= i+1 %></td>
+                <td style="font-weight:600;"><%= m.title %></td>
+                <td><%= m.subject||'—' %></td>
+                <td><%= m.year||'—' %></td>
+                <td><%= m.file_size||'—' %></td>
+                <td><%= m.download_count %></td>
+                <td style="font-size:.78rem;color:var(--text3);"><%= m.uploader %></td>
+                <td>
+                  <form action="/admin/materials/<%= m.id %>/delete" method="POST">
+                    <button class="btn btn-danger btn-sm" data-confirm="Delete this file?">🗑️</button>
+                  </form>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+          </div>
+        </div>
+        <% } else { %>
+        <div class="table-wrap" style="padding:2.5rem;text-align:center;color:var(--text3);">
+          <div style="font-size:2.2rem;margin-bottom:.6rem;">📭</div>
+          No PDFs in this folder yet. Click "Upload PDF" to add one.
+        </div>
+        <% } %>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NEW FOLDER MODAL -->
+<div class="modal-overlay" id="newFolderModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">📁 Create New Folder</span>
+      <button class="modal-close" onclick="closeModal('newFolderModal')">✕</button>
+    </div>
+    <form action="/admin/materials/folder/add" method="POST">
+      <input type="hidden" name="parent_id" value="<%= currentFolderId || '' %>">
+      <div class="form-group">
+        <label class="form-label">Folder Name (any name you like)</label>
+        <input type="text" name="name" class="form-control" required placeholder="e.g. Circulars 2019-2021, SSC Question Bank...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bangla Name (optional)</label>
+        <input type="text" name="name_bn" class="form-control" placeholder="বাংলা নাম">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Icon (emoji)</label>
+        <input type="text" name="icon" class="form-control" value="📁" maxlength="4">
+      </div>
+      <div class="form-hint mb-2">
+        <% if(currentFolder) { %>This folder will be created inside <strong><%= currentFolder.name %></strong><% } else { %>This will be a root-level folder<% } %>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Create Folder</button>
+    </form>
+  </div>
+</div>
+
+<!-- RENAME FOLDER MODAL -->
+<div class="modal-overlay" id="renameFolderModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">✏️ Rename Folder</span>
+      <button class="modal-close" onclick="closeModal('renameFolderModal')">✕</button>
+    </div>
+    <form id="renameForm" method="POST">
+      <div class="form-group">
+        <label class="form-label">Folder Name</label>
+        <input type="text" name="name" id="renameNameInput" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bangla Name</label>
+        <input type="text" name="name_bn" id="renameNameBnInput" class="form-control">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Icon</label>
+        <input type="text" name="icon" id="renameIconInput" class="form-control" maxlength="4">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+    </form>
+  </div>
+</div>
+
+<!-- UPLOAD MODAL -->
+<div class="modal-overlay" id="uploadModal">
+  <div class="modal" style="max-width:540px;">
+    <div class="modal-header">
+      <span class="modal-title">📤 Upload PDF</span>
+      <button class="modal-close" onclick="closeModal('uploadModal')">✕</button>
+    </div>
+    <form action="/admin/materials/upload" method="POST" enctype="multipart/form-data">
+      <div class="form-group">
+        <label class="form-label">Destination Folder</label>
+        <select name="category_id" class="form-control">
+          <option value=""><%= currentFolder ? '— Root (not in ' + currentFolder.name + ') —' : '— Root —' %></option>
+          <%
+            function renderOptions(nodes, depth) {
+          %>
+          <% nodes.forEach(function(node) { %>
+            <option value="<%= node.id %>" <%= currentFolderId==node.id ? 'selected' : '' %>><%= '—'.repeat(depth) %> <%= node.icon %> <%= node.name %></option>
+            <% if(node.children && node.children.length) { renderOptions(node.children, depth+1); } %>
+          <% }) %>
+          <%
+            }
+            renderOptions(tree, 0);
+          %>
+        </select>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group"><label class="form-label">Title (English)</label><input type="text" name="title" class="form-control" required></div>
+        <div class="form-group"><label class="form-label">Title (Bangla)</label><input type="text" name="title_bn" class="form-control"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group"><label class="form-label">Subject</label><input type="text" name="subject" class="form-control" placeholder="e.g. Physics"></div>
+        <div class="form-group"><label class="form-label">Year</label><input type="text" name="year" class="form-control" placeholder="2024"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Description (optional)</label><textarea name="description" class="form-control" rows="2"></textarea></div>
+      <div class="form-group">
+        <label class="form-label">PDF File</label>
+        <div class="file-input-wrap">
+          <input type="file" name="pdf" accept=".pdf" required>
+          <span class="file-name" style="font-size:.8rem;color:var(--text3);display:block;margin-top:.3rem;">No file selected</span>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">📤 Upload</button>
+    </form>
+  </div>
+</div>
+
+<script>
+function openRenameModal(id, name, nameBn, icon) {
+  document.getElementById('renameForm').action = '/admin/materials/folder/' + id + '/rename';
+  document.getElementById('renameNameInput').value = name;
+  document.getElementById('renameNameBnInput').value = nameBn;
+  document.getElementById('renameIconInput').value = icon;
+  openModal('renameFolderModal');
+}
+
+// Live search
+let mmSearchTimeout;
+document.getElementById('mmSearch').addEventListener('input', function() {
+  clearTimeout(mmSearchTimeout);
+  const q = this.value.trim();
+  const resultsBox = document.getElementById('mmSearchResults');
+  if (q.length < 2) { resultsBox.classList.add('hidden'); resultsBox.innerHTML=''; return; }
+  mmSearchTimeout = setTimeout(function() {
+    fetch('/admin/materials/search?q=' + encodeURIComponent(q))
+      .then(r => r.json())
+      .then(data => {
+        let html = '';
+        if (data.folders.length) {
+          data.folders.forEach(f => {
+            html += '<a href="/admin/materials?folder='+f.id+'" class="mm-search-row"><span>'+(f.icon||'📁')+'</span> '+f.name+' <span class="badge badge-secondary" style="margin-left:auto;">Folder</span></a>';
+          });
+        }
+        if (data.files.length) {
+          data.files.forEach(m => {
+            html += '<div class="mm-search-row"><span>📄</span> '+m.title+' <span class="badge badge-primary" style="margin-left:auto;">PDF</span></div>';
+          });
+        }
+        if (!html) html = '<div class="mm-search-row" style="color:var(--text3);">No results found</div>';
+        resultsBox.innerHTML = html;
+        resultsBox.classList.remove('hidden');
+      });
+  }, 300);
+});
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.mm-search-wrap')) {
+    document.getElementById('mmSearchResults').classList.add('hidden');
+  }
+});
+</script>
+
+<%- include('../partials/footer') %>

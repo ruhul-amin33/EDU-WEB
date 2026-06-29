@@ -1,0 +1,118 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active: 'bulk-add-q', role: 'teacher'}) %>
+  <div class="main-content">
+    <div class="page-header">
+      <div>
+        <div class="page-title">📥 <%= lang==='bn'?'একসাথে অনেক প্রশ্ন যোগ করুন':'Bulk Add Questions' %></div>
+        <div class="page-subtitle"><%= lang==='bn'?'একবারে অনেকগুলো প্রশ্ন টাইপ/পেস্ট করে জমা দিন — প্রতিটি অ্যাডমিন অনুমোদনের পর প্রকাশিত হবে':'Type or paste many questions at once — each one still goes to admin for approval' %></div>
+      </div>
+      <a href="/teacher/questions/add" class="btn btn-secondary">➕ <%= lang==='bn'?'একটি প্রশ্ন যোগ করুন':'Add Single Question' %></a>
+    </div>
+
+    <div style="max-width:950px;">
+
+      <div class="table-wrap" style="padding:1.5rem;margin-bottom:1.25rem;background:rgba(91,108,249,.05);border:1px solid rgba(91,108,249,.2);">
+        <div style="font-weight:700;margin-bottom:.6rem;">📋 <%= lang==='bn'?'ফরম্যাট যেভাবে লিখবেন':'How to format your questions' %></div>
+        <div style="font-size:.85rem;color:var(--text2);margin-bottom:.75rem;">
+          <%= lang==='bn'
+            ? 'প্রতিটি প্রশ্ন নিচের নিয়মে লিখুন, এবং দুটি প্রশ্নের মাঝে তিনটি ডাশ (---) দিয়ে আলাদা করুন:'
+            : 'Write each question in the format below, and separate two questions with three dashes (---):' %>
+        </div>
+        <pre style="background:var(--bg3);padding:1rem;border-radius:8px;font-size:.8rem;overflow-x:auto;white-space:pre-wrap;line-height:1.7;">Q: What is the SI unit of force?
+A) Joule
+B) Newton
+C) Watt
+D) Pascal
+Answer: B
+Explanation: Force is measured in Newton (N) in the SI system.
+Chapter: Chapter 3 - Motion
+Year: 2023
+Board: Dhaka Board
+---
+Q: What is the chemical symbol for water?
+A) O2
+B) H2O
+C) CO2
+D) NaCl
+Answer: B
+---</pre>
+        <div style="font-size:.78rem;color:var(--text3);margin-top:.5rem;">
+          <%= lang==='bn'
+            ? '* Q:, Answer:, Explanation:, Chapter:, Year:, Board: — এই লেবেলগুলো ছাড়া বাকি সব লেখা প্রশ্নের অংশ হিসেবে ধরা হবে। Explanation, Chapter, Year, Board ঐচ্ছিক — না লিখলেও চলবে।'
+            : '* Only "Q:", "Answer:", "Explanation:", "Chapter:", "Year:", "Board:" are special labels — everything else becomes part of the question text. Explanation, Chapter, Year, and Board are optional.' %>
+        </div>
+      </div>
+
+      <div class="table-wrap" style="padding:2rem;">
+        <form action="/teacher/questions/bulk-add" method="POST">
+
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label"><%= lang==='bn'?'বিষয়':'Subject' %> *</label>
+              <input type="text" name="subject" class="form-control" required placeholder="e.g. Physics">
+            </div>
+            <div class="form-group">
+              <label class="form-label"><%= lang==='bn'?'পরীক্ষার স্তর':'Level' %> *</label>
+              <select name="level" class="form-control" required>
+                <option value="ssc">SSC</option>
+                <option value="hsc">HSC</option>
+                <option value="admission">Admission</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label"><%= lang==='bn'?'বিভাগ':'Stream' %></label>
+              <select name="stream" class="form-control">
+                <option value="all"><%= lang==='bn'?'সব':'All' %></option>
+                <option value="science"><%= lang==='bn'?'বিজ্ঞান':'Science' %></option>
+                <option value="arts"><%= lang==='bn'?'মানবিক':'Arts' %></option>
+                <option value="commerce"><%= lang==='bn'?'বাণিজ্য':'Commerce' %></option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label"><%= lang==='bn'?'কঠিনতা':'Difficulty' %></label>
+              <select name="difficulty" class="form-control">
+                <option value="easy"><%= lang==='bn'?'সহজ':'Easy' %></option>
+                <option value="medium" selected><%= lang==='bn'?'মধ্যম':'Medium' %></option>
+                <option value="hard"><%= lang==='bn'?'কঠিন':'Hard' %></option>
+              </select>
+            </div>
+          </div>
+          <div style="font-size:.78rem;color:var(--text3);margin:-.5rem 0 1.25rem;">
+            <%= lang==='bn'?'উপরের Subject/Level/Stream/Difficulty নিচের ব্যাচের সব প্রশ্নের জন্য প্রযোজ্য হবে।':'The Subject/Level/Stream/Difficulty above will apply to every question in this batch.' %>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="form-group">
+            <label class="form-label">📝 <%= lang==='bn'?'প্রশ্নগুলো এখানে টাইপ/পেস্ট করুন':'Paste your questions here' %> *</label>
+            <textarea name="raw_text" id="bulkTextarea" class="form-control" rows="16" required style="font-family:monospace;font-size:.85rem;" placeholder="Q: ...
+A) ...
+B) ...
+C) ...
+D) ...
+Answer: B
+---
+Q: ..."></textarea>
+            <div style="font-size:.78rem;color:var(--text3);margin-top:.4rem;" id="blockCounter"><%= lang==='bn'?'প্রশ্ন পাওয়া গেছে':'Questions detected' %>: 0</div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg">
+            📤 <%= lang==='bn'?'সব প্রশ্ন জমা দিন (অনুমোদনের জন্য)':'Submit All Questions for Approval' %>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function countBlocks() {
+  const text = document.getElementById('bulkTextarea').value;
+  const blocks = text.split(/\n\s*-{3,}\s*\n/).map(b => b.trim()).filter(Boolean);
+  document.getElementById('blockCounter').textContent = '<%= lang==="bn"?"প্রশ্ন পাওয়া গেছে":"Questions detected" %>: ' + blocks.length;
+}
+document.getElementById('bulkTextarea').addEventListener('input', countBlocks);
+</script>
+
+<%- include('../partials/footer') %>

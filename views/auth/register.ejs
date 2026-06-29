@@ -1,0 +1,38 @@
+<%- include('../partials/layout') %>
+<div class="auth-page">
+  <div class="auth-card animate-fadeIn">
+    <div class="auth-header">
+      <div style="font-size:2.5rem;margin-bottom:0.5rem;">🚀</div>
+      <h2><%= lang === 'bn' ? 'নিবন্ধন করুন' : 'Create Account' %></h2>
+      <p><%= lang === 'bn' ? 'বিনামূল্যে শুরু করুন — কোনো ক্রেডিট কার্ড নেই' : 'Start for free — no credit card required' %></p>
+    </div>
+
+    <form action="/auth/register" method="POST">
+      <div class="form-group">
+        <label class="form-label"><%= lang === 'bn' ? 'পূর্ণ নাম' : 'Full Name' %></label>
+        <input type="text" name="name" class="form-control" placeholder="<%= lang === 'bn' ? 'আপনার নাম' : 'Your Name' %>" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label"><%= lang === 'bn' ? 'ইমেইল' : 'Email Address' %></label>
+        <input type="email" name="email" class="form-control" placeholder="you@example.com" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label"><%= lang === 'bn' ? 'পাসওয়ার্ড' : 'Password' %></label>
+        <input type="password" name="password" class="form-control" placeholder="<%= lang === 'bn' ? 'কমপক্ষে ৬ অক্ষর' : 'Minimum 6 characters' %>" required minlength="6">
+      </div>
+      <div class="form-group">
+        <label class="form-label"><%= lang === 'bn' ? 'পাসওয়ার্ড নিশ্চিত করুন' : 'Confirm Password' %></label>
+        <input type="password" name="confirm_password" class="form-control" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg">
+        🎯 <%= lang === 'bn' ? 'নিবন্ধন করুন' : 'Create Account' %>
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <%= lang === 'bn' ? 'ইতিমধ্যে অ্যাকাউন্ট আছে?' : 'Already have an account?' %>
+      <a href="/auth/login"><%= lang === 'bn' ? ' লগইন করুন' : ' Sign In' %></a>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

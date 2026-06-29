@@ -1,0 +1,56 @@
+<%- include('../partials/layout') %>
+<div style="padding-top:var(--nav-h);min-height:100vh;background:var(--bg);">
+<div class="container" style="padding:2.5rem 1rem;">
+
+  <div class="section-header">
+    <span class="section-eyebrow"><%=lang==='bn'?'পিডিএফ ম্যাটেরিয়াল':'PDF Materials'%></span>
+    <h2 class="section-title"><%=lang==='bn'?'স্টাডি ম্যাটেরিয়াল':'Study Materials'%></h2>
+    <p class="section-subtitle"><%=lang==='bn'?'ফোল্ডার নির্বাচন করুন এবং প্রয়োজনীয় PDF ডাউনলোড করুন':'Select a folder and download the PDFs you need'%></p>
+  </div>
+
+  <!-- Search -->
+  <form method="GET" style="max-width:480px;margin:0 auto 2.5rem;">
+    <div style="display:flex;gap:.6rem;">
+      <input type="text" name="q" class="form-control" placeholder="🔍 <%=lang==='bn'?'খুঁজুন...':'Search materials...'%>">
+      <button type="submit" class="btn btn-primary"><%=lang==='bn'?'খুঁজুন':'Search'%></button>
+    </div>
+  </form>
+
+  <% if(rootFolders.length){ %>
+  <div class="folder-grid mb-3">
+    <% rootFolders.forEach(function(f){ %>
+    <a href="/materials/browse/<%=f.id%>" class="folder-item">
+      <div class="icon"><%=f.icon||'📁'%></div>
+      <div class="name"><%=lang==='bn'&&f.name_bn?f.name_bn:f.name%></div>
+    </a>
+    <% }) %>
+  </div>
+  <% } else { %>
+  <div style="text-align:center;padding:3rem;color:var(--text3);">
+    <div style="font-size:2.5rem;margin-bottom:.75rem;">📂</div>
+    <p><%=lang==='bn'?'কোনো ফোল্ডার নেই':'No folders yet'%></p>
+  </div>
+  <% } %>
+
+  <% if(rootFiles && rootFiles.length){ %>
+  <div class="mm-section-label mt-3 mb-2"><%=lang==='bn'?'অন্যান্য ফাইল':'Other Files'%></div>
+  <div class="materials-folder-grid">
+    <% rootFiles.forEach(function(m){ %>
+    <div class="folder-card">
+      <div class="folder-card-thumb" style="background:linear-gradient(135deg,var(--primary),var(--primary-light));"><span style="font-size:2.2rem;">📄</span></div>
+      <div class="folder-card-body">
+        <div class="folder-card-title"><%=lang==='bn'&&m.title_bn?m.title_bn:m.title%></div>
+        <div class="folder-card-meta"><%=m.subject||''%><%=m.year?' • '+m.year:''%></div>
+        <div class="folder-card-footer">
+          <span class="folder-card-count">⬇️ <%=m.download_count%></span>
+          <a href="/materials/<%=m.id%>/download" class="btn btn-primary btn-sm">📥 <%=lang==='bn'?'ডাউনলোড':'Download'%></a>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+  <% } %>
+
+</div>
+</div>
+<%- include('../partials/footer') %>

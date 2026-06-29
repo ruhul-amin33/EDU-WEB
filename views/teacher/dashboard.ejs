@@ -1,0 +1,44 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active: 'dashboard', role: 'teacher'}) %>
+  <div class="main-content">
+    <div class="page-header">
+      <div class="page-title">👨‍🏫 Teacher Dashboard</div>
+      <div class="page-subtitle">Welcome, <%= user.name %>!</div>
+    </div>
+    <div class="stat-cards">
+      <div class="stat-card"><div class="stat-card-icon">📝</div><div class="stat-card-val"><%= stats.total %></div><div class="stat-card-label">Total Questions</div></div>
+      <div class="stat-card"><div class="stat-card-icon">⏳</div><div class="stat-card-val" style="color:var(--warning)"><%= stats.pending %></div><div class="stat-card-label">Pending Approval</div></div>
+      <div class="stat-card"><div class="stat-card-icon">✅</div><div class="stat-card-val" style="color:var(--success)"><%= stats.approved %></div><div class="stat-card-label">Approved</div></div>
+      <div class="stat-card"><div class="stat-card-icon">📊</div><div class="stat-card-val"><%= stats.total>0?Math.round(stats.approved/stats.total*100):0 %>%</div><div class="stat-card-label">Approval Rate</div></div>
+    </div>
+    <div style="display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap;">
+      <a href="/teacher/questions/add" class="btn btn-primary">➕ Add Question</a>
+      <a href="/teacher/questions?status=pending" class="btn btn-secondary">⏳ Pending</a>
+      <a href="/teacher/set-exam" class="btn btn-secondary">📝 Set Exam</a>
+    </div>
+    <div style="font-weight:800;font-size:1rem;margin-bottom:1rem;">📋 Recent Questions</div>
+    <div style="display:flex;flex-direction:column;gap:0.75rem;">
+      <% recent.forEach(q => { %>
+      <div class="table-wrap" style="padding:1.25rem;">
+        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.5rem;">
+          <div>
+            <span class="badge <%= q.status==='approved'?'badge-success':q.status==='rejected'?'badge-danger':'badge-warning' %>"><%= q.status.toUpperCase() %></span>
+            <span class="badge badge-secondary" style="margin-left:0.4rem;"><%= q.subject %></span>
+          </div>
+          <span style="font-size:0.75rem;color:var(--text3);"><%= new Date(q.created_at).toLocaleDateString() %></span>
+        </div>
+        <div style="font-size:0.88rem;color:var(--text);margin-bottom:0.5rem;"><%= q.question_text.substring(0,120) %>...</div>
+        <% if(q.admin_comment) { %>
+        <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:0.5rem 0.75rem;font-size:0.8rem;color:var(--danger);margin-bottom:0.5rem;">
+          💬 Admin: <%= q.admin_comment %>
+        </div>
+        <% } %>
+        <% if(q.status==='rejected') { %><a href="/teacher/questions/<%= q.id %>/edit" class="btn btn-secondary btn-sm">✏️ Edit & Resubmit</a><% } %>
+      </div>
+      <% }) %>
+      <% if(!recent.length) { %><div class="table-wrap" style="padding:3rem;text-align:center;color:var(--text3);">No questions yet. <a href="/teacher/questions/add" style="color:var(--primary);font-weight:600;">Add now</a></div><% } %>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

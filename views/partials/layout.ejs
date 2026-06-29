@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="<%= lang==='bn'?'bn':'en' %>" data-theme="<%= theme %>" data-color-theme="<%= typeof siteTheme!=='undefined' ? siteTheme : 'default' %>" data-font-size="<%= typeof siteFontSize!=='undefined' ? siteFontSize : 'standard' %>" data-deco-style="<%= typeof settings!=='undefined' && settings.deco_style ? settings.deco_style : 'modern' %>" data-layout-style="<%= typeof settings!=='undefined' && settings.layout_style ? settings.layout_style : 'classic' %>" data-font-family="<%= typeof settings!=='undefined' && settings.site_font_family ? settings.site_font_family : 'inter' %>">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title><%= typeof pageTitle!=='undefined' ? pageTitle+' | Parafin' : 'Parafin — Education Platform' %></title>
+  <meta name="description" content="<%= lang==='bn'?'পারাফিন — বাংলাদেশের সেরা শিক্ষামূলক প্ল্যাটফর্ম।':'Parafin — Bangladesh\'s premier education platform.' %>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" type="image/png" href="<%= settings.site_logo %>">
+</head>
+<body>
+
+<!-- Mobile overlay (for sidebar + nav) -->
+<div id="navOverlay" onclick="closeAllMenus()"></div>
+
+<!-- ===================== NAVBAR ===================== -->
+<nav class="navbar">
+  <a class="nav-brand" href="/"><img src="<%= settings.site_logo %>" alt="<%= settings.site_name || 'Parafin' %>" class="brand-logo"></a>
+
+  <!-- Right side actions -->
+  <div class="nav-actions">
+    <button class="btn-lang" id="langToggle" type="button" data-current-lang="<%= lang %>"><%= lang==='en'?'বাংলা':'English' %></button>
+    <button class="btn-theme" id="themeToggle" type="button"><%= theme==='dark'?'☀️':'🌙' %></button>
+    <% if(user){ %>
+      <a href="/auth/logout" class="btn btn-secondary btn-sm nav-desktop-only">🚪 Logout</a>
+    <% } else { %>
+      <a href="/auth/login" class="btn btn-secondary btn-sm nav-desktop-only">Login</a>
+      <a href="/auth/register" class="btn btn-primary btn-sm nav-desktop-only">Register</a>
+    <% } %>
+    <!-- Hamburger — mobile only -->
+    <button class="hamburger nav-mobile-only" id="hamburger" type="button" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- Desktop Nav Links (inline in navbar on desktop) -->
+  <div class="nav-links-desktop">
+    <a href="/">🏠 <%= lang==='bn'?'হোম':'Home' %></a>
+    <a href="/materials">📚 <%= lang==='bn'?'স্টাডি ম্যাটেরিয়াল':'Study Materials' %></a>
+    <a href="/courses">🎓 <%= lang==='bn'?'কোর্স':'Courses' %></a>
+    <% if(user){ %>
+      <a href="/exam/browse">📖 <%= lang==='bn'?'প্রশ্ন পড়ুন':'Browse Questions' %></a>
+      <a href="/exam/setup">📝 <%= lang==='bn'?'পরীক্ষা':'Take Exam' %></a>
+      <% if(user.role==='admin'){ %>
+        <a href="/admin">⚙️ Admin</a>
+      <% } else if(user.role==='teacher'){ %>
+        <a href="/teacher">📋 Teacher</a>
+      <% } else { %>
+        <a href="/student">👤 <%= lang==='bn'?'ড্যাশবোর্ড':'Dashboard' %></a>
+      <% } %>
+    <% } %>
+    <a href="/#team">👥 <%= lang==='bn'?'আমাদের দল':'Our Team' %></a>
+  </div>
+</nav>
+
+<!-- Mobile Nav Drawer — OUTSIDE navbar so position:fixed works correctly -->
+<div class="nav-drawer" id="navLinks">
+  <div class="nav-drawer-header">
+    <span class="nav-drawer-brand"><img src="<%= settings.site_logo %>" alt="<%= settings.site_name || 'Parafin' %>" class="brand-logo"> <%= settings.site_name || 'Parafin' %><span class="brand-dot">.</span></span>
+    <button class="nav-drawer-close" onclick="closeAllMenus()" type="button">✕</button>
+  </div>
+  <nav class="nav-drawer-links">
+    <a href="/">🏠 <%= lang==='bn'?'হোম':'Home' %></a>
+    <a href="/materials">📚 <%= lang==='bn'?'স্টাডি ম্যাটেরিয়াল':'Study Materials' %></a>
+    <a href="/courses">🎓 <%= lang==='bn'?'কোর্স':'Courses' %></a>
+    <a href="/admission">🏛️ <%= lang==='bn'?'ভর্তি':'Admission' %></a>
+    <% if(user){ %>
+      <a href="/exam/browse">📖 <%= lang==='bn'?'প্রশ্ন পড়ুন':'Browse Questions' %></a>
+      <a href="/exam/setup">📝 <%= lang==='bn'?'পরীক্ষা দিন':'Take Exam' %></a>
+      <% if(user.role==='admin'){ %>
+        <a href="/admin">⚙️ Admin Panel</a>
+      <% } else if(user.role==='teacher'){ %>
+        <a href="/teacher">📋 Teacher Panel</a>
+      <% } else { %>
+        <a href="/student">👤 <%= lang==='bn'?'ড্যাশবোর্ড':'Dashboard' %></a>
+      <% } %>
+    <% } %>
+    <a href="/#team">👥 <%= lang==='bn'?'আমাদের দল':'Our Team' %></a>
+  </nav>
+  <div class="nav-drawer-auth">
+    <% if(user){ %>
+      <a href="/auth/logout" class="btn btn-danger" style="width:100%;justify-content:center;">🚪 <%= lang==='bn'?'লগআউট':'Logout' %></a>
+    <% } else { %>
+      <a href="/auth/login" class="btn btn-secondary" style="width:100%;justify-content:center;margin-bottom:.5rem;">Login</a>
+      <a href="/auth/register" class="btn btn-primary" style="width:100%;justify-content:center;">🚀 Register Free</a>
+    <% } %>
+  </div>
+</div>
+
+<!-- Flash Messages -->
+<div class="flash-wrap">
+  <% if(messages.success&&messages.success.length){messages.success.forEach(function(m){%>
+    <div class="alert alert-success animate-fadeIn">✅ <%=m%></div>
+  <%})}%>
+  <% if(messages.error&&messages.error.length){messages.error.forEach(function(m){%>
+    <div class="alert alert-error animate-fadeIn">❌ <%=m%></div>
+  <%})}%>
+  <% if(messages.info&&messages.info.length){messages.info.forEach(function(m){%>
+    <div class="alert alert-info animate-fadeIn">ℹ️ <%=m%></div>
+  <%})}%>
+</div>

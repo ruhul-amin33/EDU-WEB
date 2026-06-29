@@ -1,0 +1,159 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active:'content', role:'admin'}) %>
+  <div class="main-content">
+    <div class="page-header">
+      <div>
+        <div class="page-title">✏️ Site Content Editor</div>
+        <div class="page-subtitle">Edit homepage text, social links, and contact info — no coding needed, changes go live instantly</div>
+      </div>
+    </div>
+
+    <!-- ============ SITE LOGO ============ -->
+    <div class="table-wrap" style="padding:1.75rem;margin-bottom:1.75rem;">
+      <div style="font-weight:800;font-size:1.05rem;margin-bottom:.4rem;">🖼️ Site Logo</div>
+      <div style="font-size:.92rem;color:var(--text2);margin-bottom:1.25rem;">Upload a new logo — it updates instantly in the navbar, footer, and browser tab icon everywhere on the site.</div>
+      <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
+        <div style="background:var(--bg3);padding:.75rem 1.25rem;border-radius:10px;display:flex;align-items:center;">
+          <img src="<%= settings.site_logo %>" alt="Current logo" style="height:50px;width:auto;max-width:160px;object-fit:contain;">
+        </div>
+        <form action="/admin/content/logo" method="POST" enctype="multipart/form-data" style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">
+          <input type="file" name="logo" accept="image/*" class="form-control" required style="max-width:260px;">
+          <button type="submit" class="btn btn-primary">⬆️ Upload New Logo</button>
+        </form>
+      </div>
+    </div>
+
+    <form action="/admin/content" method="POST">
+
+      <!-- ============ HERO SECTION ============ -->
+      <div class="table-wrap" style="padding:1.75rem;margin-bottom:1.5rem;">
+        <div style="font-weight:800;font-size:1.05rem;margin-bottom:1.25rem;">🏠 Homepage Hero Section</div>
+
+        <div class="form-group">
+          <label class="form-label">Site Name</label>
+          <input type="text" name="site_name" class="form-control" value="<%= settings.site_name %>">
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div class="form-group">
+            <label class="form-label">Badge Text (English)</label>
+            <input type="text" name="hero_badge_en" class="form-control" value="<%= settings.hero_badge_en %>">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Badge Text (বাংলা)</label>
+            <input type="text" name="hero_badge_bn" class="form-control" value="<%= settings.hero_badge_bn %>">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Main Heading (English)</label>
+            <input type="text" name="hero_title_en" class="form-control" value="<%= settings.hero_title_en %>">
+            <div class="form-hint">Tip: wrap any word in **double asterisks** to highlight it in the gradient color, e.g. "Your Path to **Academic Excellence**"</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Main Heading (বাংলা)</label>
+            <input type="text" name="hero_title_bn" class="form-control" value="<%= settings.hero_title_bn %>">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Subtitle (English)</label>
+          <textarea name="hero_subtitle_en" class="form-control" rows="2"><%= settings.hero_subtitle_en %></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Subtitle (বাংলা)</label>
+          <textarea name="hero_subtitle_bn" class="form-control" rows="2"><%= settings.hero_subtitle_bn %></textarea>
+        </div>
+      </div>
+
+      <!-- ============ STATS ============ -->
+      <div class="table-wrap" style="padding:1.75rem;margin-bottom:1.5rem;">
+        <div style="font-weight:800;font-size:1.05rem;margin-bottom:1.25rem;">📊 Hero Stats Row</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;">
+          <div class="form-group">
+            <label class="form-label">Students</label>
+            <input type="text" name="stat_students" class="form-control" value="<%= settings.stat_students %>">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Questions</label>
+            <input type="text" name="stat_questions" class="form-control" value="<%= settings.stat_questions %>">
+          </div>
+          <div class="form-group">
+            <label class="form-label">PDFs</label>
+            <input type="text" name="stat_pdfs" class="form-control" value="<%= settings.stat_pdfs %>">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Satisfaction</label>
+            <input type="text" name="stat_satisfaction" class="form-control" value="<%= settings.stat_satisfaction %>">
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ SOCIAL LINKS ============ -->
+      <div class="table-wrap" style="padding:1.75rem;margin-bottom:1.5rem;">
+        <div style="font-weight:800;font-size:1.05rem;margin-bottom:1.25rem;">🔗 Social Links & Contact</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div class="form-group">
+            <label class="form-label">💬 WhatsApp Number</label>
+            <input type="text" name="whatsapp_number" class="form-control" value="<%= settings.whatsapp_number %>" placeholder="8801XXXXXXXXX (no + or spaces)">
+            <div class="form-hint">Used for the floating WhatsApp button. Format: country code + number, e.g. 8801623961877</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">📨 Telegram URL</label>
+            <input type="url" name="telegram_url" class="form-control" value="<%= settings.telegram_url %>" placeholder="https://t.me/yourchannel">
+          </div>
+          <div class="form-group">
+            <label class="form-label">▶️ YouTube URL</label>
+            <input type="url" name="youtube_url" class="form-control" value="<%= settings.youtube_url %>" placeholder="https://youtube.com/@yourchannel">
+          </div>
+          <div class="form-group">
+            <label class="form-label">📘 Facebook URL</label>
+            <input type="url" name="facebook_url" class="form-control" value="<%= settings.facebook_url %>" placeholder="https://facebook.com/yourpage">
+          </div>
+          <div class="form-group">
+            <label class="form-label">📧 Support Email</label>
+            <input type="email" name="support_email" class="form-control" value="<%= settings.support_email %>">
+          </div>
+          <div class="form-group">
+            <label class="form-label">📞 Support Phone (display text)</label>
+            <input type="text" name="support_phone" class="form-control" value="<%= settings.support_phone %>" placeholder="+880 1XXX-XXXXXX">
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ FOOTER ============ -->
+      <div class="table-wrap" style="padding:1.75rem;margin-bottom:1.5rem;">
+        <div style="font-weight:800;font-size:1.05rem;margin-bottom:1.25rem;">📄 Footer Text</div>
+        <div class="form-group">
+          <label class="form-label">About Text (English)</label>
+          <textarea name="footer_about_en" class="form-control" rows="2"><%= settings.footer_about_en %></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">About Text (বাংলা)</label>
+          <textarea name="footer_about_bn" class="form-control" rows="2"><%= settings.footer_about_bn %></textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div class="form-group">
+            <label class="form-label">Copyright Text (English)</label>
+            <input type="text" name="footer_copyright_en" class="form-control" value="<%= settings.footer_copyright_en %>">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Copyright Text (বাংলা)</label>
+            <input type="text" name="footer_copyright_bn" class="form-control" value="<%= settings.footer_copyright_bn %>">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Footer Tagline (English)</label>
+            <input type="text" name="footer_tagline_en" class="form-control" value="<%= settings.footer_tagline_en %>">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Footer Tagline (বাংলা)</label>
+            <input type="text" name="footer_tagline_bn" class="form-control" value="<%= settings.footer_tagline_bn %>">
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-lg">✅ Save All Changes</button>
+    </form>
+
+  </div>
+</div>
+<%- include('../partials/footer') %>

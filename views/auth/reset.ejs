@@ -1,0 +1,21 @@
+<%- include('../partials/layout') %>
+<div class="auth-page">
+  <div class="auth-card animate-fadeIn">
+    <div class="auth-header">
+      <div style="font-size:2.5rem;margin-bottom:0.5rem;">🔒</div>
+      <h2><%= lang === 'bn' ? 'নতুন পাসওয়ার্ড সেট করুন' : 'Set New Password' %></h2>
+    </div>
+    <form action="/auth/reset/<%= token %>" method="POST">
+      <div class="form-group">
+        <label class="form-label"><%= lang === 'bn' ? 'নতুন পাসওয়ার্ড' : 'New Password' %></label>
+        <input type="password" name="password" class="form-control" required minlength="6">
+      </div>
+      <div class="form-group">
+        <label class="form-label"><%= lang === 'bn' ? 'পাসওয়ার্ড নিশ্চিত করুন' : 'Confirm Password' %></label>
+        <input type="password" name="confirm_password" class="form-control" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block"><%= lang === 'bn' ? 'পাসওয়ার্ড রিসেট করুন' : 'Reset Password' %></button>
+    </form>
+  </div>
+</div>
+<%- include('../partials/footer') %>

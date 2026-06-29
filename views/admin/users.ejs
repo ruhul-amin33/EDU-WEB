@@ -1,0 +1,84 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active: 'users', role: 'admin'}) %>
+  <div class="main-content">
+    <div class="page-header">
+      <div>
+        <div class="page-title">👤 Manage Users</div>
+        <div class="page-subtitle">View accounts, change roles, and reset passwords for locked-out users</div>
+      </div>
+    </div>
+
+    <div class="alert alert-info" style="max-width:700px;">
+      🔒 For security, passwords are encrypted and cannot be viewed. If a student or teacher forgets their password, click <strong>"Reset Password"</strong> below to instantly set a new one you can share with them.
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Role</th><th>Stream/Level</th><th>Joined</th><th>Change Role</th><th>Password</th></tr></thead>
+        <tbody>
+          <% users.forEach((u,i) => { %>
+          <tr>
+            <td><%= i+1 %></td>
+            <td style="font-weight:600;"><%= u.name %></td>
+            <td style="font-size:.85rem;"><%= u.email %></td>
+            <td><span class="badge <%= u.role==='admin'?'badge-danger':u.role==='teacher'?'badge-primary':'badge-secondary' %>"><%= u.role %></span></td>
+            <td style="font-size:.85rem;"><%= u.level ? u.level.toUpperCase() : '—' %> <%= u.stream ? '/ '+u.stream : '' %></td>
+            <td style="font-size:.8rem;"><%= new Date(u.created_at).toLocaleDateString() %></td>
+            <td>
+              <% if(u.id !== user.id) { %>
+              <form action="/admin/users/<%= u.id %>/role" method="POST" style="display:flex;gap:.4rem;">
+                <select name="role" class="form-control select-inline" style="padding:.35rem .6rem;font-size:.85rem;">
+                  <option value="student" <%= u.role==='student'?'selected':'' %>>Student</option>
+                  <option value="teacher" <%= u.role==='teacher'?'selected':'' %>>Teacher</option>
+                  <option value="admin" <%= u.role==='admin'?'selected':'' %>>Admin</option>
+                </select>
+                <button class="btn btn-primary btn-sm">Save</button>
+              </form>
+              <% } else { %><span style="font-size:.8rem;color:var(--text3);">You</span><% } %>
+            </td>
+            <td>
+              <% if(u.id !== user.id) { %>
+              <button onclick="openResetModal(<%= u.id %>, '<%= u.name.replace(/'/g,"\\'") %>')" class="btn btn-secondary btn-sm">🔑 Reset</button>
+              <% } else { %><span style="font-size:.8rem;color:var(--text3);">—</span><% } %>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Reset Password Modal -->
+<div class="modal-overlay" id="resetPwModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">🔑 Reset Password</span>
+      <button class="modal-close" onclick="closeModal('resetPwModal')">✕</button>
+    </div>
+    <p style="color:var(--text2);margin-bottom:1.25rem;font-size:.92rem;">
+      Setting a new password for <strong id="resetPwUserName"></strong>. Leave the field blank to auto-generate a random password.
+    </p>
+    <form id="resetPwForm" method="POST">
+      <div class="form-group">
+        <label class="form-label">New Password (optional)</label>
+        <input type="text" name="new_password" class="form-control" placeholder="Leave blank to auto-generate" minlength="6">
+        <div class="form-hint">Minimum 6 characters. The new password will be shown once after saving — copy it immediately.</div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">✅ Set New Password</button>
+    </form>
+  </div>
+</div>
+
+<script>
+function openResetModal(id, name) {
+  document.getElementById('resetPwForm').action = '/admin/users/' + id + '/reset-password';
+  document.getElementById('resetPwUserName').textContent = name;
+  openModal('resetPwModal');
+}
+</script>
+
+<%- include('../partials/footer') %>

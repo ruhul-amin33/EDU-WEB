@@ -1,0 +1,65 @@
+<!-- Floating WhatsApp Button -->
+<% if (settings.whatsapp_number) { %>
+<a href="https://wa.me/<%= settings.whatsapp_number %>" target="_blank" rel="noopener" class="whatsapp-float" title="Chat on WhatsApp"><%- include('social-icons', {icon:'whatsapp'}) %></a>
+<% } %>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3><img src="<%= settings.site_logo %>" alt="<%= settings.site_name %>" class="footer-logo"> <%= settings.site_name %>.</h3>
+        <p><%= lang === 'bn' ? settings.footer_about_bn : settings.footer_about_en %></p>
+        <div class="footer-socials">
+          <% if (settings.whatsapp_number) { %><a href="https://wa.me/<%= settings.whatsapp_number %>" class="social-btn" target="_blank" rel="noopener" title="WhatsApp"><%- include('social-icons', {icon:'whatsapp'}) %></a><% } %>
+          <% if (settings.telegram_url) { %><a href="<%= settings.telegram_url %>" class="social-btn" target="_blank" rel="noopener" title="Telegram"><%- include('social-icons', {icon:'telegram'}) %></a><% } %>
+          <% if (settings.youtube_url) { %><a href="<%= settings.youtube_url %>" class="social-btn" target="_blank" rel="noopener" title="YouTube"><%- include('social-icons', {icon:'youtube'}) %></a><% } %>
+          <% if (settings.facebook_url) { %><a href="<%= settings.facebook_url %>" class="social-btn" target="_blank" rel="noopener" title="Facebook"><%- include('social-icons', {icon:'facebook'}) %></a><% } %>
+          <% if (settings.support_email) { %><a href="mailto:<%= settings.support_email %>" class="social-btn" title="Email"><%- include('social-icons', {icon:'email'}) %></a><% } %>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4><%= lang === 'bn' ? 'দ্রুত লিংক' : 'Quick Links' %></h4>
+        <ul>
+          <li><a href="/"><%= lang === 'bn' ? 'হোম' : 'Home' %></a></li>
+          <li><a href="/materials"><%= lang === 'bn' ? 'স্টাডি ম্যাটেরিয়াল' : 'Study Materials' %></a></li>
+          <li><a href="/courses"><%= lang === 'bn' ? 'কোর্সসমূহ' : 'Courses' %></a></li>
+          <li><a href="/exam/browse"><%= lang === 'bn' ? 'প্রশ্ন পড়ুন' : 'Browse Questions' %></a></li>
+          <li><a href="/exam/setup"><%= lang === 'bn' ? 'পরীক্ষা দিন' : 'Take Exam' %></a></li>
+          <li><a href="/#team"><%= lang === 'bn' ? 'আমাদের দল' : 'Our Team' %></a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4><%= lang === 'bn' ? 'যোগাযোগ' : 'Connect' %></h4>
+        <ul class="footer-connect-list">
+          <% if (settings.whatsapp_number) { %><li><a href="https://wa.me/<%= settings.whatsapp_number %>" target="_blank" rel="noopener"><%- include('social-icons', {icon:'whatsapp'}) %> WhatsApp</a></li><% } %>
+          <% if (settings.telegram_url) { %><li><a href="<%= settings.telegram_url %>" target="_blank" rel="noopener"><%- include('social-icons', {icon:'telegram'}) %> Telegram</a></li><% } %>
+          <% if (settings.youtube_url) { %><li><a href="<%= settings.youtube_url %>" target="_blank" rel="noopener"><%- include('social-icons', {icon:'youtube'}) %> YouTube</a></li><% } %>
+          <% if (settings.facebook_url) { %><li><a href="<%= settings.facebook_url %>" target="_blank" rel="noopener"><%- include('social-icons', {icon:'facebook'}) %> Facebook</a></li><% } %>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4><%= lang === 'bn' ? 'সাপোর্ট' : 'Support' %></h4>
+        <ul>
+          <li><a href="/support"><%= lang === 'bn' ? 'সহায়তা কেন্দ্র' : 'Help Center' %></a></li>
+          <li><a href="/contact"><%= lang === 'bn' ? 'যোগাযোগ' : 'Contact Us' %></a></li>
+          <li><a href="/privacy"><%= lang === 'bn' ? 'গোপনীয়তা নীতি' : 'Privacy Policy' %></a></li>
+          <li><a href="/terms"><%= lang === 'bn' ? 'ব্যবহারের শর্ত' : 'Terms of Service' %></a></li>
+          <% if (settings.support_phone) { %><li><a href="https://wa.me/<%= settings.whatsapp_number %>" target="_blank" rel="noopener">📞 <%= settings.support_phone %></a></li><% } %>
+          <% if (settings.support_email) { %><li><a href="mailto:<%= settings.support_email %>"><%= settings.support_email %></a></li><% } %>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© <%= new Date().getFullYear() %> <%= settings.site_name %>. <%= lang === 'bn' ? settings.footer_copyright_bn : settings.footer_copyright_en %></span>
+      <span><%= lang === 'bn' ? settings.footer_tagline_bn : settings.footer_tagline_en %></span>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

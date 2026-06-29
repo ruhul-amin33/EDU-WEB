@@ -1,0 +1,66 @@
+<%- include('../partials/layout') %>
+<div style="padding-top:var(--nav-h);min-height:100vh;background:var(--bg);">
+<div class="container" style="padding:2.5rem 1rem;">
+
+  <div class="breadcrumb">
+    <a href="/materials">🏠 <%=lang==='bn'?'ম্যাটেরিয়াল':'Materials'%></a>
+    <% breadcrumb.forEach(function(b){ %>
+      <span>/</span>
+      <a href="/materials/browse/<%=b.id%>"><%=b.icon%> <%=lang==='bn'&&b.name_bn?b.name_bn:b.name%></a>
+    <% }) %>
+  </div>
+
+  <div class="page-header" style="margin-bottom:1.75rem;">
+    <div style="display:flex;align-items:center;gap:.7rem;">
+      <span style="font-size:2.2rem;"><%=cat.icon%></span>
+      <div>
+        <div class="page-title"><%=lang==='bn'&&cat.name_bn?cat.name_bn:cat.name%></div>
+      </div>
+    </div>
+  </div>
+
+  <% if(subCats && subCats.length){ %>
+  <div class="mm-section-label mb-2">📁 <%=lang==='bn'?'সাব-ফোল্ডার':'Sub-folders'%></div>
+  <div class="folder-grid mb-3">
+    <% subCats.forEach(function(s){ %>
+    <a href="/materials/browse/<%=s.id%>" class="folder-item">
+      <div class="icon"><%=s.icon||'📁'%></div>
+      <div class="name"><%=lang==='bn'&&s.name_bn?s.name_bn:s.name%></div>
+    </a>
+    <% }) %>
+  </div>
+  <% } %>
+
+  <div class="mm-section-label mb-2">📄 <%=lang==='bn'?'ফাইলসমূহ':'Files'%> (<%=materials.length%>)</div>
+  <% if(materials.length){ %>
+  <div class="materials-folder-grid">
+    <% materials.forEach(function(m){ %>
+    <div class="folder-card">
+      <div class="folder-card-thumb" style="background:linear-gradient(135deg,var(--primary),var(--primary-light));">
+        <span style="font-size:2.2rem;">📄</span>
+        <% if(m.year){%><div class="folder-card-badge"><%=m.year%></div><%}%>
+      </div>
+      <div class="folder-card-body">
+        <div>
+          <div class="folder-card-title"><%=lang==='bn'&&m.title_bn?m.title_bn:m.title%></div>
+          <% if(m.description){%><div class="folder-card-meta" style="margin-bottom:.4rem;"><%=m.description.substring(0,60)%></div><%}%>
+          <div class="folder-card-meta"><%=m.subject||''%> <%=m.file_size?'• '+m.file_size:''%></div>
+        </div>
+        <div class="folder-card-footer">
+          <span class="folder-card-count">⬇️ <%=m.download_count%></span>
+          <a href="/materials/<%=m.id%>/download" class="btn btn-primary btn-sm">📥 <%=lang==='bn'?'ডাউনলোড':'Download'%></a>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+  <% } else { %>
+  <div style="text-align:center;padding:2.5rem;color:var(--text3);">
+    <div style="font-size:2.2rem;margin-bottom:.6rem;">📭</div>
+    <p><%=lang==='bn'?'এই ফোল্ডারে কোনো ফাইল নেই':'No files in this folder yet'%></p>
+  </div>
+  <% } %>
+
+</div>
+</div>
+<%- include('../partials/footer') %>

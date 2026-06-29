@@ -1,0 +1,35 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active: 'purchases', role: 'admin'}) %>
+  <div class="main-content">
+    <div class="page-header"><div class="page-title">💳 Purchase Requests</div></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Student</th><th>Course</th><th>Amount</th><th>Method</th><th>TxnID</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody>
+          <% purchases.forEach((p,i) => { %>
+          <tr>
+            <td><%= i+1 %></td>
+            <td><div style="font-weight:600;font-size:0.85rem;"><%= p.student_name %></div><div style="font-size:0.75rem;color:var(--text3);"><%= p.email %></div></td>
+            <td style="font-size:0.85rem;"><%= p.course_title %></td>
+            <td>৳<%= p.amount %></td>
+            <td><span class="badge badge-secondary"><%= p.payment_method %></span></td>
+            <td style="font-size:0.78rem;font-family:monospace;"><%= p.transaction_id||'—' %></td>
+            <td><span class="badge <%= p.status==='completed'?'badge-success':p.status==='failed'?'badge-danger':'badge-warning' %>"><%= p.status %></span></td>
+            <td style="font-size:0.78rem;"><%= new Date(p.purchased_at).toLocaleDateString() %></td>
+            <td>
+              <% if(p.status==='pending') { %>
+              <div style="display:flex;gap:0.4rem;">
+                <form action="/admin/purchases/<%= p.id %>/approve" method="POST"><button class="btn btn-success btn-sm">✅</button></form>
+                <form action="/admin/purchases/<%= p.id %>/reject" method="POST"><button class="btn btn-danger btn-sm">❌</button></form>
+              </div>
+              <% } else { %><span style="font-size:0.75rem;color:var(--text3);">Done</span><% } %>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

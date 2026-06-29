@@ -1,0 +1,86 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active:'dashboard', role:'admin'}) %>
+  <div class="main-content">
+    <div style="display:none;" id="mobileSidebarBtn" class="mb-2">
+      <button id="sidebarToggle" class="sidebar-mobile-toggle">☰ Menu</button>
+    </div>
+
+    <div class="page-header">
+      <div>
+        <div class="page-title">📊 Admin Dashboard</div>
+        <div class="page-subtitle">Welcome, <%= user.name %> — Platform overview</div>
+      </div>
+      <a href="/" class="btn btn-secondary btn-sm">🌐 View Site</a>
+    </div>
+
+    <div class="stat-cards">
+      <div class="stat-card"><div class="stat-card-icon">👥</div><div class="stat-card-val"><%= stats.users %></div><div class="stat-card-label">Total Students</div></div>
+      <div class="stat-card"><div class="stat-card-icon">⏳</div><div class="stat-card-val" style="color:var(--warning)"><%= stats.pendingQ %></div><div class="stat-card-label">Pending Questions</div></div>
+      <div class="stat-card"><div class="stat-card-icon">🎓</div><div class="stat-card-val"><%= stats.courses %></div><div class="stat-card-label">Courses</div></div>
+      <div class="stat-card"><div class="stat-card-icon">📄</div><div class="stat-card-val"><%= stats.materials %></div><div class="stat-card-label">PDF Materials</div></div>
+      <div class="stat-card"><div class="stat-card-icon">💳</div><div class="stat-card-val" style="color:var(--warning)"><%= stats.pendingPurchases %></div><div class="stat-card-label">Pending Purchases</div></div>
+      <div class="stat-card"><div class="stat-card-icon">⭐</div><div class="stat-card-val" style="color:var(--warning)"><%= stats.pendingReviews %></div><div class="stat-card-label">Pending Reviews</div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;">
+      <a href="/admin/questions?status=pending" class="cat-card" style="text-align:left;padding:1.5rem;">
+        <span style="font-size:1.8rem;">❓</span>
+        <div style="font-weight:700;margin-top:.5rem;font-size:.95rem;">Review Questions</div>
+        <div style="font-size:.75rem;color:var(--text3);margin-top:.2rem;"><%= stats.pendingQ %> awaiting approval</div>
+      </a>
+      <a href="/admin/materials" class="cat-card" style="text-align:left;padding:1.5rem;">
+        <span style="font-size:1.8rem;">📤</span>
+        <div style="font-weight:700;margin-top:.5rem;font-size:.95rem;">Upload Materials</div>
+        <div style="font-size:.75rem;color:var(--text3);margin-top:.2rem;">Add PDF books & questions</div>
+      </a>
+      <a href="/admin/courses" class="cat-card" style="text-align:left;padding:1.5rem;">
+        <span style="font-size:1.8rem;">🎓</span>
+        <div style="font-weight:700;margin-top:.5rem;font-size:.95rem;">Manage Courses</div>
+        <div style="font-size:.75rem;color:var(--text3);margin-top:.2rem;"><%= stats.courses %> total courses</div>
+      </a>
+      <a href="/admin/exam-results" class="cat-card" style="text-align:left;padding:1.5rem;">
+        <span style="font-size:1.8rem;">📊</span>
+        <div style="font-weight:700;margin-top:.5rem;font-size:.95rem;">Exam Results</div>
+        <div style="font-size:.75rem;color:var(--text3);margin-top:.2rem;">View & export to Excel</div>
+      </a>
+      <a href="/admin/purchases" class="cat-card" style="text-align:left;padding:1.5rem;">
+        <span style="font-size:1.8rem;">💳</span>
+        <div style="font-weight:700;margin-top:.5rem;font-size:.95rem;">Verify Purchases</div>
+        <div style="font-size:.75rem;color:var(--text3);margin-top:.2rem;"><%= stats.pendingPurchases %> pending</div>
+      </a>
+      <a href="/admin/reports" class="cat-card" style="text-align:left;padding:1.5rem;">
+        <span style="font-size:1.8rem;">⚠️</span>
+        <div style="font-weight:700;margin-top:.5rem;font-size:.95rem;">Question Reports</div>
+        <div style="font-size:.75rem;color:var(--text3);margin-top:.2rem;">Student error reports</div>
+      </a>
+      <a href="/admin/reviews" class="cat-card" style="text-align:left;padding:1.5rem;">
+        <span style="font-size:1.8rem;">⭐</span>
+        <div style="font-weight:700;margin-top:.5rem;font-size:.95rem;">Approve Reviews</div>
+        <div style="font-size:.75rem;color:var(--text3);margin-top:.2rem;"><%= stats.pendingReviews %> pending</div>
+      </a>
+      <a href="/admin/team" class="cat-card" style="text-align:left;padding:1.5rem;">
+        <span style="font-size:1.8rem;">👥</span>
+        <div style="font-weight:700;margin-top:.5rem;font-size:.95rem;">Manage Team</div>
+        <div style="font-size:.75rem;color:var(--text3);margin-top:.2rem;">Add/edit team members</div>
+      </a>
+      <a href="/admin/users" class="cat-card" style="text-align:left;padding:1.5rem;">
+        <span style="font-size:1.8rem;">👤</span>
+        <div style="font-weight:700;margin-top:.5rem;font-size:.95rem;">Manage Users</div>
+        <div style="font-size:.75rem;color:var(--text3);margin-top:.2rem;"><%= stats.users %> students</div>
+      </a>
+      <a href="/admin/content" class="cat-card" style="text-align:left;padding:1.5rem;">
+        <span style="font-size:1.8rem;">✏️</span>
+        <div style="font-weight:700;margin-top:.5rem;font-size:.95rem;">Site Content</div>
+        <div style="font-size:.75rem;color:var(--text3);margin-top:.2rem;">Edit text, social links</div>
+      </a>
+      <a href="/admin/appearance" class="cat-card" style="text-align:left;padding:1.5rem;">
+        <span style="font-size:1.8rem;">🎨</span>
+        <div style="font-weight:700;margin-top:.5rem;font-size:.95rem;">Site Appearance</div>
+        <div style="font-size:.75rem;color:var(--text3);margin-top:.2rem;">Color theme & font size</div>
+      </a>
+    </div>
+
+  </div>
+</div>
+<%- include('../partials/footer') %>

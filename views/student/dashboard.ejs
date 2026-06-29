@@ -1,0 +1,164 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active: 'dashboard', role: 'student'}) %>
+  <div class="main-content">
+    <!-- Mobile sidebar toggle -->
+    <div style="display:none;" id="mobileSidebarBtn" class="mb-2">
+      <button id="sidebarToggle" class="sidebar-mobile-toggle">☰ Menu</button>
+    </div>
+
+    <!-- Welcome Header -->
+    <div style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:var(--radius-lg);padding:1.75rem 2rem;margin-bottom:2rem;color:white;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:-30px;right:-30px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,0.08);pointer-events:none;"></div>
+      <div style="position:relative;z-index:1;">
+        <div style="font-size:1.4rem;font-weight:900;margin-bottom:0.3rem;">
+          <%= lang==='bn' ? `স্বাগতম, ${user.name}! 👋` : `Welcome back, ${user.name}! 👋` %>
+        </div>
+        <div style="font-size:0.88rem;opacity:0.85;">
+          <%= user.level ? user.level.toUpperCase() : '' %>
+          <%= user.level === 'admission' && user.hsc_session ? ' (HSC '+user.hsc_session+')' : '' %>
+          <%= user.stream ? ' • ' + (lang==='bn' ? (user.stream==='science'?'বিজ্ঞান':user.stream==='arts'?'মানবিক':'বাণিজ্য') : user.stream.charAt(0).toUpperCase()+user.stream.slice(1)) : '' %>
+          — <%= lang==='bn' ? 'আজকের লক্ষ্য পূরণ করুন।' : 'Achieve today\'s goal.' %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stat-cards" style="margin-bottom:2rem;">
+      <div class="stat-card">
+        <div class="stat-card-icon">📝</div>
+        <div class="stat-card-val"><%= examCount %></div>
+        <div class="stat-card-label"><%= lang==='bn'?'মোট পরীক্ষা':'Total Exams' %></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon">📊</div>
+        <div class="stat-card-val"><%= avgScore %>%</div>
+        <div class="stat-card-label"><%= lang==='bn'?'গড় স্কোর':'Average Score' %></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon">📚</div>
+        <div class="stat-card-val"><%= purchases.length %></div>
+        <div class="stat-card-label"><%= lang==='bn'?'এনরোল্ড কোর্স':'Enrolled Courses' %></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon">🏅</div>
+        <div class="stat-card-val"><%= avgScore>=80?'A+':avgScore>=70?'A':avgScore>=60?'B':avgScore>=50?'C':'—' %></div>
+        <div class="stat-card-label"><%= lang==='bn'?'গ্রেড':'Grade' %></div>
+      </div>
+    </div>
+
+    <!-- Category Browse — shown ONLY after login -->
+    <div style="margin-bottom:2rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+        <div style="font-weight:800;font-size:1rem;color:var(--text);">📁 <%= lang==='bn'?'বিভাগ অনুযায়ী পড়াশোনা':'Browse by Category' %></div>
+      </div>
+      <div class="cat-grid">
+        <a href="/materials?level=ssc&stream=science" class="cat-card">
+          <span class="cat-icon">🔬</span>
+          <div class="cat-name">SSC <%= lang==='bn'?'বিজ্ঞান':'Science' %></div>
+          <div class="cat-count"><%= lang==='bn'?'পদার্থ, রসায়ন, জীব':'Physics, Chem, Bio' %></div>
+        </a>
+        <a href="/materials?level=ssc&stream=arts" class="cat-card">
+          <span class="cat-icon">📜</span>
+          <div class="cat-name">SSC <%= lang==='bn'?'মানবিক':'Arts' %></div>
+          <div class="cat-count"><%= lang==='bn'?'বাংলা, ইতিহাস, ভূগোল':'Bangla, History, Geo' %></div>
+        </a>
+        <a href="/materials?level=ssc&stream=commerce" class="cat-card">
+          <span class="cat-icon">💼</span>
+          <div class="cat-name">SSC <%= lang==='bn'?'বাণিজ্য':'Commerce' %></div>
+          <div class="cat-count"><%= lang==='bn'?'হিসাব, অর্থনীতি':'Accounting, Economics' %></div>
+        </a>
+        <a href="/materials?level=hsc&stream=science" class="cat-card">
+          <span class="cat-icon">⚗️</span>
+          <div class="cat-name">HSC <%= lang==='bn'?'বিজ্ঞান':'Science' %></div>
+          <div class="cat-count"><%= lang==='bn'?'পদার্থ, রসায়ন, জীব, গণিত':'Phys, Chem, Bio, Math' %></div>
+        </a>
+        <a href="/materials?level=hsc&stream=arts" class="cat-card">
+          <span class="cat-icon">🎨</span>
+          <div class="cat-name">HSC <%= lang==='bn'?'মানবিক':'Arts' %></div>
+          <div class="cat-count"><%= lang==='bn'?'বাংলা সাহিত্য, দর্শন':'Bangla Lit, Philosophy' %></div>
+        </a>
+        <a href="/materials?level=hsc&stream=commerce" class="cat-card">
+          <span class="cat-icon">📊</span>
+          <div class="cat-name">HSC <%= lang==='bn'?'বাণিজ্য':'Commerce' %></div>
+          <div class="cat-count"><%= lang==='bn'?'হিসাব, ব্যবস্থাপনা':'Accounts, Management' %></div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Quick Actions + Recent Exams grid -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;">
+
+      <!-- Quick Actions -->
+      <div class="table-wrap" style="padding:1.5rem;">
+        <div style="font-weight:800;font-size:0.95rem;color:var(--text);margin-bottom:1.25rem;">⚡ <%= lang==='bn'?'দ্রুত কার্যক্রম':'Quick Actions' %></div>
+        <div style="display:flex;flex-direction:column;gap:0.75rem;">
+          <a href="/exam/setup" class="btn btn-primary" style="justify-content:flex-start;gap:0.75rem;">
+            📝 <%= lang==='bn'?'পরীক্ষা শুরু করুন':'Start a Practice Exam' %>
+          </a>
+          <a href="/materials" class="btn btn-secondary" style="justify-content:flex-start;gap:0.75rem;">
+            📚 <%= lang==='bn'?'PDF ডাউনলোড করুন':'Download PDF Materials' %>
+          </a>
+          <a href="/courses" class="btn btn-secondary" style="justify-content:flex-start;gap:0.75rem;">
+            🎓 <%= lang==='bn'?'কোর্স দেখুন':'Browse Courses' %>
+          </a>
+          <a href="/exam/history/all" class="btn btn-secondary" style="justify-content:flex-start;gap:0.75rem;">
+            📊 <%= lang==='bn'?'পরীক্ষার ইতিহাস':'View Exam History' %>
+          </a>
+        </div>
+      </div>
+
+      <!-- Recent Exams -->
+      <div class="table-wrap" style="padding:1.5rem;">
+        <div style="font-weight:800;font-size:0.95rem;color:var(--text);margin-bottom:1.25rem;">📋 <%= lang==='bn'?'সাম্প্রতিক পরীক্ষা':'Recent Exams' %></div>
+        <% if (recentExams.length) { %>
+          <% recentExams.forEach(function(e) { %>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem 0;border-bottom:1px solid var(--border);">
+            <div>
+              <div style="font-size:0.85rem;font-weight:600;color:var(--text);"><%= e.subject || (e.level.toUpperCase()+' '+e.stream) %></div>
+              <div style="font-size:0.72rem;color:var(--text3);margin-top:0.1rem;"><%= new Date(e.created_at).toLocaleDateString('en-BD') %></div>
+            </div>
+            <div>
+              <% if (e.score !== null && e.total_questions) { %>
+                <% var p = Math.round(e.score/e.total_questions*100); %>
+                <span class="badge <%= p>=80?'badge-success':p>=60?'badge-warning':'badge-danger' %>"><%= e.score %>/<%= e.total_questions %></span>
+              <% } else { %>
+                <a href="/exam/<%= e.id %>" class="badge badge-warning" style="text-decoration:none;"><%= lang==='bn'?'চলমান':'Resume' %></a>
+              <% } %>
+            </div>
+          </div>
+          <% }) %>
+        <% } else { %>
+          <div style="text-align:center;padding:2rem;color:var(--text3);font-size:0.85rem;">
+            <div style="font-size:2rem;margin-bottom:0.5rem;">📝</div>
+            <%= lang==='bn'?'এখনো কোনো পরীক্ষা দেননি':'No exams yet' %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Submit Review -->
+    <div class="table-wrap" style="padding:1.5rem;">
+      <div style="font-weight:800;font-size:0.95rem;color:var(--text);margin-bottom:1.25rem;">⭐ <%= lang==='bn'?'আপনার মতামত দিন':'Share Your Review' %></div>
+      <form action="/student/review" method="POST" style="display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end;">
+        <div class="form-group" style="min-width:120px;margin:0;">
+          <label class="form-label"><%= lang==='bn'?'রেটিং':'Rating' %></label>
+          <select name="rating" class="form-control" style="width:auto;">
+            <option value="5">⭐⭐⭐⭐⭐</option>
+            <option value="4">⭐⭐⭐⭐</option>
+            <option value="3">⭐⭐⭐</option>
+            <option value="2">⭐⭐</option>
+            <option value="1">⭐</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex:1;min-width:220px;margin:0;">
+          <label class="form-label"><%= lang==='bn'?'মন্তব্য':'Your Review' %></label>
+          <input type="text" name="review_text" class="form-control" placeholder="<%= lang==='bn'?'আপনার অভিজ্ঞতা শেয়ার করুন...':'Share your experience...' %>" required>
+        </div>
+        <button type="submit" class="btn btn-primary"><%= lang==='bn'?'জমা দিন':'Submit' %></button>
+      </form>
+    </div>
+
+  </div>
+</div>
+<%- include('../partials/footer') %>

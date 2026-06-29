@@ -1,0 +1,75 @@
+<%- include('../partials/layout') %>
+<div style="padding-top:64px;min-height:100vh;background:var(--bg);">
+<div class="container" style="padding:3rem 1rem;">
+
+  <div class="section-header">
+    <span class="section-eyebrow"><%= lang==='bn'?'কোর্সসমূহ':'Courses' %></span>
+    <h2 class="section-title"><%= lang==='bn'?'সব কোর্স':'All Courses' %></h2>
+    <p class="section-subtitle"><%= lang==='bn'?'বিশেষজ্ঞ শিক্ষকদের পরিচালিত সম্পূর্ণ কোর্সসমূহ':'Expert-led complete courses for exam success' %></p>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-bar" style="margin-bottom:2rem;background:var(--bg2);padding:1rem 1.25rem;border-radius:var(--radius-lg);border:1px solid var(--border);">
+    <a href="/courses" class="filter-btn <%= !filters.level&&!filters.stream?'active':'' %>"><%= lang==='bn'?'সব':'All' %></a>
+    <a href="/courses?level=ssc" class="filter-btn <%= filters.level==='ssc'?'active':'' %>">SSC</a>
+    <a href="/courses?level=hsc" class="filter-btn <%= filters.level==='hsc'?'active':'' %>">HSC</a>
+    <a href="/courses?stream=science" class="filter-btn <%= filters.stream==='science'?'active':'' %>"><%= lang==='bn'?'বিজ্ঞান':'Science' %></a>
+    <a href="/courses?stream=arts" class="filter-btn <%= filters.stream==='arts'?'active':'' %>"><%= lang==='bn'?'মানবিক':'Arts' %></a>
+    <a href="/courses?stream=commerce" class="filter-btn <%= filters.stream==='commerce'?'active':'' %>"><%= lang==='bn'?'বাণিজ্য':'Commerce' %></a>
+  </div>
+
+  <% if (courses.length) { %>
+  <div class="courses-grid">
+    <% courses.forEach(function(c) { %>
+    <div class="course-card">
+      <div class="course-thumb">
+        <% if (c.thumbnail) { %><img src="/uploads/<%= c.thumbnail %>" alt="<%= c.title %>"><% } else { %><div style="font-size:3.5rem;">🎓</div><% } %>
+        <div class="course-level-badge"><%= c.level.toUpperCase() %></div>
+        <% if (c.original_price > c.price && c.price > 0) { %>
+        <div style="position:absolute;bottom:0.6rem;left:0.6rem;background:var(--danger);color:white;padding:0.18rem 0.55rem;border-radius:50px;font-size:0.68rem;font-weight:700;">
+          <%= Math.round((c.original_price-c.price)/c.original_price*100) %>% OFF
+        </div>
+        <% } %>
+      </div>
+      <div class="course-body">
+        <div>
+          <div class="course-header-row">
+            <div class="course-title"><%= lang==='bn'&&c.title_bn ? c.title_bn : c.title %> <span class="course-verified">✅</span></div>
+          </div>
+          <div class="course-rating" style="margin-bottom:0.5rem;">
+            <span class="stars">★★★★☆</span>
+            <span class="rating-count">(<%= c.enrolled_count %> <%= lang==='bn'?'শিক্ষার্থী':'enrolled' %>)</span>
+          </div>
+          <ul class="course-features">
+            <% var desc = (lang==='bn'&&c.description_bn ? c.description_bn : c.description) || ''; %>
+            <% var lines = desc.split('\n').filter(function(l){ return l.trim(); }).slice(0,4); %>
+            <% if (lines.length) { lines.forEach(function(line){ %><li><%= line.trim() %></li><% }); } else { %>
+            <li><%= lang==='bn'?'বিশেষজ্ঞ শিক্ষক দ্বারা পরিচালিত':'Expert teacher-led course' %></li>
+            <li><%= lang==='bn'?'সম্পূর্ণ সিলেবাস কভার':'Full syllabus coverage' %></li>
+            <% if (c.total_lessons > 0) { %><li><%= c.total_lessons %> <%= lang==='bn'?'টি ক্লাস':'live classes' %></li><% } %>
+            <% } %>
+          </ul>
+        </div>
+        <div class="course-footer">
+          <div>
+            <div class="course-price"><%= c.price==0?(lang==='bn'?'বিনামূল্যে':'Free'):'৳'+c.price %></div>
+            <% if (c.original_price > c.price) { %><div class="course-price-orig">৳<%= c.original_price %></div><% } %>
+          </div>
+          <div class="course-actions">
+            <button onclick="navigator.share ? navigator.share({title:'<%= c.title %>',url:window.location.href}) : ''" class="btn-course-share">➦ <%= lang==='bn'?'শেয়ার':'Share' %></button>
+            <a href="/courses/<%= c.id %>" class="btn-course-view">ℹ <%= lang==='bn'?'বিস্তারিত':'View Courses' %></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+  <% } else { %>
+  <div style="text-align:center;padding:4rem;color:var(--text3);">
+    <div style="font-size:3rem;margin-bottom:1rem;">🎓</div>
+    <p><%= lang==='bn'?'এই বিভাগে কোনো কোর্স নেই':'No courses in this category' %></p>
+  </div>
+  <% } %>
+</div>
+</div>
+<%- include('../partials/footer') %>

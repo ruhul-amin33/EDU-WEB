@@ -1,0 +1,27 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active: 'reports', role: 'admin'}) %>
+  <div class="main-content">
+    <div class="page-header"><div class="page-title">⚠️ Question Reports</div></div>
+    <% reports.forEach(r => { %>
+    <div class="table-wrap" style="padding:1.5rem;margin-bottom:1rem;">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+        <span class="badge badge-danger"><%= r.report_type.replace('_',' ').toUpperCase() %></span>
+        <span style="font-size:0.78rem;color:var(--text3);">by <%= r.reporter_name %> • <%= new Date(r.created_at).toLocaleDateString() %></span>
+      </div>
+      <div style="font-weight:600;color:var(--text);margin-bottom:0.5rem;font-size:0.9rem;"><%= r.question_text.substring(0,120) %>...</div>
+      <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:0.75rem;font-size:0.85rem;color:var(--text2);margin-bottom:1rem;">
+        💬 "<%= r.comment %>"
+      </div>
+      <form action="/admin/reports/<%= r.id %>/resolve" method="POST" style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+        <input type="text" name="admin_comment" class="form-control" placeholder="Admin notes..." style="flex:1;min-width:200px;">
+        <button class="btn btn-success btn-sm">✅ Mark Resolved</button>
+      </form>
+    </div>
+    <% }) %>
+    <% if(!reports.length) { %>
+    <div class="table-wrap" style="padding:3rem;text-align:center;color:var(--text3);">🎉 No open reports!</div>
+    <% } %>
+  </div>
+</div>
+<%- include('../partials/footer') %>

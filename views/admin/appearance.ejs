@@ -1,0 +1,298 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active:'appearance', role:'admin'}) %>
+  <div class="main-content">
+    <div class="page-header">
+      <div>
+        <div class="page-title">🎨 Site Appearance</div>
+        <div class="page-subtitle">Control the website's color theme and font size — changes apply instantly for every visitor</div>
+      </div>
+    </div>
+
+    <!-- ============ COLOR THEME ============ -->
+    <div class="table-wrap" style="padding:1.75rem;margin-bottom:1.75rem;">
+      <div style="font-weight:800;font-size:1.05rem;margin-bottom:.4rem;">🎨 Color Theme</div>
+      <div style="font-size:.92rem;color:var(--text2);margin-bottom:1.25rem;">Choose the primary accent color used across buttons, links, and highlights everywhere on the site.</div>
+
+      <form action="/admin/appearance/theme" method="POST">
+        <div class="theme-grid">
+
+          <label class="theme-option <%= currentTheme==='default'?'selected':'' %>">
+            <input type="radio" name="theme_name" value="default" <%= currentTheme==='default'?'checked':'' %> onchange="selectTheme(this)">
+            <div class="theme-swatch" style="background:linear-gradient(135deg,#5B6CF9,#00D4AA);"></div>
+            <div class="theme-name">Default Blue</div>
+            <div class="theme-desc">Indigo & Teal — friendly, modern</div>
+          </label>
+
+          <label class="theme-option <%= currentTheme==='emerald'?'selected':'' %>">
+            <input type="radio" name="theme_name" value="emerald" <%= currentTheme==='emerald'?'checked':'' %> onchange="selectTheme(this)">
+            <div class="theme-swatch" style="background:linear-gradient(135deg,#10b981,#06b6d4);"></div>
+            <div class="theme-name">Emerald Ocean</div>
+            <div class="theme-desc">Green & Cyan — fresh, academic</div>
+          </label>
+
+          <label class="theme-option <%= currentTheme==='sunset'?'selected':'' %>">
+            <input type="radio" name="theme_name" value="sunset" <%= currentTheme==='sunset'?'checked':'' %> onchange="selectTheme(this)">
+            <div class="theme-swatch" style="background:linear-gradient(135deg,#f97316,#ec4899);"></div>
+            <div class="theme-name">Sunset Orange</div>
+            <div class="theme-desc">Orange & Pink — energetic, bold</div>
+          </label>
+
+          <label class="theme-option <%= currentTheme==='royal'?'selected':'' %>">
+            <input type="radio" name="theme_name" value="royal" <%= currentTheme==='royal'?'checked':'' %> onchange="selectTheme(this)">
+            <div class="theme-swatch" style="background:linear-gradient(135deg,#7c3aed,#db2777);"></div>
+            <div class="theme-name">Royal Purple</div>
+            <div class="theme-desc">Purple & Magenta — premium feel</div>
+          </label>
+
+          <label class="theme-option <%= currentTheme==='crimson'?'selected':'' %>">
+            <input type="radio" name="theme_name" value="crimson" <%= currentTheme==='crimson'?'checked':'' %> onchange="selectTheme(this)">
+            <div class="theme-swatch" style="background:linear-gradient(135deg,#dc2626,#f59e0b);"></div>
+            <div class="theme-name">Crimson Gold</div>
+            <div class="theme-desc">Red & Amber — bold, attention-grabbing</div>
+          </label>
+
+          <label class="theme-option <%= currentTheme==='ocean'?'selected':'' %>">
+            <input type="radio" name="theme_name" value="ocean" <%= currentTheme==='ocean'?'checked':'' %> onchange="selectTheme(this)">
+            <div class="theme-swatch" style="background:linear-gradient(135deg,#0284c7,#0d9488);"></div>
+            <div class="theme-name">Deep Ocean</div>
+            <div class="theme-desc">Blue & Teal — calm, professional</div>
+          </label>
+
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg mt-3">✅ Apply Color Theme</button>
+      </form>
+    </div>
+
+    <!-- ============ FONT SIZE ============ -->
+    <div class="table-wrap" style="padding:1.75rem;">
+      <div style="font-weight:800;font-size:1.05rem;margin-bottom:.4rem;">🔤 Font Size</div>
+      <div style="font-size:.92rem;color:var(--text2);margin-bottom:1.25rem;">Choose how large text appears across the entire website for all visitors — helpful for readability.</div>
+
+      <form action="/admin/appearance/font-size" method="POST">
+        <div class="font-size-grid">
+
+          <label class="font-size-option <%= currentFontSize==='standard'?'selected':'' %>">
+            <input type="radio" name="font_size" value="standard" <%= currentFontSize==='standard'?'checked':'' %> onchange="selectFontSize(this)">
+            <div class="font-size-preview" style="font-size:1rem;">Aa</div>
+            <div class="theme-name">Standard</div>
+            <div class="theme-desc">Default size (17px base)</div>
+          </label>
+
+          <label class="font-size-option <%= currentFontSize==='large'?'selected':'' %>">
+            <input type="radio" name="font_size" value="large" <%= currentFontSize==='large'?'checked':'' %> onchange="selectFontSize(this)">
+            <div class="font-size-preview" style="font-size:1.2rem;">Aa</div>
+            <div class="theme-name">Large</div>
+            <div class="theme-desc">+12% bigger (19px base)</div>
+          </label>
+
+          <label class="font-size-option <%= currentFontSize==='xlarge'?'selected':'' %>">
+            <input type="radio" name="font_size" value="xlarge" <%= currentFontSize==='xlarge'?'checked':'' %> onchange="selectFontSize(this)">
+            <div class="font-size-preview" style="font-size:1.4rem;">Aa</div>
+            <div class="theme-name">Extra Large</div>
+            <div class="theme-desc">+24% bigger (21px base)</div>
+          </label>
+
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg mt-3">✅ Apply Font Size</button>
+      </form>
+    </div>
+
+    <!-- ============ FONT FAMILY ============ -->
+    <div class="table-wrap" style="padding:1.75rem;margin-bottom:1.75rem;">
+      <div style="font-weight:800;font-size:1.05rem;margin-bottom:.4rem;">🔤 Font Family</div>
+      <div style="font-size:.92rem;color:var(--text2);margin-bottom:1.25rem;">Choose the typeface used across the entire site. Bangla text always stays readable no matter which one you pick.</div>
+
+      <form action="/admin/appearance/font-family" method="POST">
+        <div class="font-size-grid">
+
+          <label class="font-size-option <%= currentFontFamily==='inter'?'selected':'' %>">
+            <input type="radio" name="font_family" value="inter" <%= currentFontFamily==='inter'?'checked':'' %> onchange="selectFontFamily(this)">
+            <div class="font-size-preview" style="font-family:'Inter',sans-serif;font-size:1.3rem;">Aa</div>
+            <div class="theme-name">Inter</div>
+            <div class="theme-desc">Clean & modern (current default)</div>
+          </label>
+
+          <label class="font-size-option <%= currentFontFamily==='poppins'?'selected':'' %>">
+            <input type="radio" name="font_family" value="poppins" <%= currentFontFamily==='poppins'?'checked':'' %> onchange="selectFontFamily(this)">
+            <div class="font-size-preview" style="font-family:'Poppins',sans-serif;font-size:1.3rem;">Aa</div>
+            <div class="theme-name">Poppins</div>
+            <div class="theme-desc">Friendly & rounded — popular for EdTech</div>
+          </label>
+
+          <label class="font-size-option <%= currentFontFamily==='roboto'?'selected':'' %>">
+            <input type="radio" name="font_family" value="roboto" <%= currentFontFamily==='roboto'?'checked':'' %> onchange="selectFontFamily(this)">
+            <div class="font-size-preview" style="font-family:'Roboto',sans-serif;font-size:1.3rem;">Aa</div>
+            <div class="theme-name">Roboto</div>
+            <div class="theme-desc">Clean & neutral — Google's flagship font</div>
+          </label>
+
+          <label class="font-size-option <%= currentFontFamily==='montserrat'?'selected':'' %>">
+            <input type="radio" name="font_family" value="montserrat" <%= currentFontFamily==='montserrat'?'checked':'' %> onchange="selectFontFamily(this)">
+            <div class="font-size-preview" style="font-family:'Montserrat',sans-serif;font-size:1.3rem;">Aa</div>
+            <div class="theme-name">Montserrat</div>
+            <div class="theme-desc">Bold & elegant — premium feel</div>
+          </label>
+
+          <label class="font-size-option <%= currentFontFamily==='lato'?'selected':'' %>">
+            <input type="radio" name="font_family" value="lato" <%= currentFontFamily==='lato'?'checked':'' %> onchange="selectFontFamily(this)">
+            <div class="font-size-preview" style="font-family:'Lato',sans-serif;font-size:1.3rem;">Aa</div>
+            <div class="theme-name">Lato</div>
+            <div class="theme-desc">Warm & professional</div>
+          </label>
+
+          <label class="font-size-option <%= currentFontFamily==='nunito'?'selected':'' %>">
+            <input type="radio" name="font_family" value="nunito" <%= currentFontFamily==='nunito'?'checked':'' %> onchange="selectFontFamily(this)">
+            <div class="font-size-preview" style="font-family:'Nunito',sans-serif;font-size:1.3rem;">Aa</div>
+            <div class="theme-name">Nunito</div>
+            <div class="theme-desc">Soft & friendly — rounded letterforms</div>
+          </label>
+
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg mt-3">✅ Apply Font</button>
+      </form>
+    </div>
+
+    <!-- ============ LAYOUT STYLE (full visual identity) ============ -->
+    <div class="table-wrap" style="padding:1.75rem;margin-bottom:1.75rem;border:2px solid var(--primary);">
+      <div style="font-weight:800;font-size:1.05rem;margin-bottom:.4rem;">🏗️ Website Layout Style <span class="badge badge-primary" style="margin-left:.5rem;">NEW</span></div>
+      <div style="font-size:.92rem;color:var(--text2);margin-bottom:1.25rem;">A complete visual identity change — navbar, hero, page headers, and every card on every page (dashboards, courses, admin panels included), inspired by real professional sites.</div>
+
+      <form action="/admin/appearance/layout-style" method="POST">
+        <div class="font-size-grid">
+
+          <label class="font-size-option <%= currentLayoutStyle==='classic'?'selected':'' %>">
+            <input type="radio" name="layout_style" value="classic" <%= currentLayoutStyle==='classic'?'checked':'' %> onchange="selectLayoutStyle(this)">
+            <div class="font-size-preview" style="font-size:1.3rem;">🎯</div>
+            <div class="theme-name">Classic</div>
+            <div class="theme-desc">Centered hero (current default)</div>
+          </label>
+
+          <label class="font-size-option <%= currentLayoutStyle==='corporate'?'selected':'' %>">
+            <input type="radio" name="layout_style" value="corporate" <%= currentLayoutStyle==='corporate'?'checked':'' %> onchange="selectLayoutStyle(this)">
+            <div class="font-size-preview" style="font-size:1.3rem;">💼</div>
+            <div class="theme-name">Corporate</div>
+            <div class="theme-desc">Split two-column — SaaS/B2B style</div>
+          </label>
+
+          <label class="font-size-option <%= currentLayoutStyle==='editorial'?'selected':'' %>">
+            <input type="radio" name="layout_style" value="editorial" <%= currentLayoutStyle==='editorial'?'checked':'' %> onchange="selectLayoutStyle(this)">
+            <div class="font-size-preview" style="font-size:1.3rem;">📰</div>
+            <div class="theme-name">Editorial</div>
+            <div class="theme-desc">Left-aligned, big type — Stripe/Linear style</div>
+          </label>
+
+          <label class="font-size-option <%= currentLayoutStyle==='bold'?'selected':'' %>">
+            <input type="radio" name="layout_style" value="bold" <%= currentLayoutStyle==='bold'?'checked':'' %> onchange="selectLayoutStyle(this)">
+            <div class="font-size-preview" style="font-size:1.3rem;">🌈</div>
+            <div class="theme-name">Bold</div>
+            <div class="theme-desc">Gradient + floating navbar — startup landing style</div>
+          </label>
+
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg mt-3">✅ Apply Layout Style</button>
+      </form>
+    </div>
+
+    <!-- ============ DECORATION STYLE ============ -->
+    <div class="table-wrap" style="padding:1.75rem;margin-bottom:1.75rem;">
+      <div style="font-weight:800;font-size:1.05rem;margin-bottom:.4rem;">🎨 Website Decoration Style</div>
+      <div style="font-size:.92rem;color:var(--text2);margin-bottom:1.25rem;">Switch the overall visual personality of the site — every card, button, and panel updates instantly.</div>
+
+      <form action="/admin/appearance/deco-style" method="POST">
+        <div class="font-size-grid">
+
+          <label class="font-size-option <%= currentDecoStyle==='modern'?'selected':'' %>">
+            <input type="radio" name="deco_style" value="modern" <%= currentDecoStyle==='modern'?'checked':'' %> onchange="selectDecoStyle(this)">
+            <div class="font-size-preview" style="font-size:1rem;">🟦</div>
+            <div class="theme-name">Modern</div>
+            <div class="theme-desc">Bold 3D buttons, lifted cards (current default)</div>
+          </label>
+
+          <label class="font-size-option <%= currentDecoStyle==='minimal'?'selected':'' %>">
+            <input type="radio" name="deco_style" value="minimal" <%= currentDecoStyle==='minimal'?'checked':'' %> onchange="selectDecoStyle(this)">
+            <div class="font-size-preview" style="font-size:1rem;">▭</div>
+            <div class="theme-name">Minimal</div>
+            <div class="theme-desc">Flat, clean, professional — Stripe/Linear style</div>
+          </label>
+
+          <label class="font-size-option <%= currentDecoStyle==='soft'?'selected':'' %>">
+            <input type="radio" name="deco_style" value="soft" <%= currentDecoStyle==='soft'?'checked':'' %> onchange="selectDecoStyle(this)">
+            <div class="font-size-preview" style="font-size:1rem;">⬭</div>
+            <div class="theme-name">Soft</div>
+            <div class="theme-desc">Rounded, airy, friendly — Airbnb/Duolingo style</div>
+          </label>
+
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg mt-3">✅ Apply Decoration Style</button>
+      </form>
+    </div>
+
+    <!-- ============ HERO SPACING ============ -->
+    <div class="table-wrap" style="padding:1.75rem;margin-bottom:1.75rem;">
+      <div style="font-weight:800;font-size:1.05rem;margin-bottom:.4rem;">📏 Homepage Hero Spacing</div>
+      <div style="font-size:.92rem;color:var(--text2);margin-bottom:1.25rem;">Control the gap between the navbar and the homepage title ("Your Path to Academic Excellence") on desktop.</div>
+
+      <form action="/admin/appearance/hero-spacing" method="POST">
+        <div class="font-size-grid">
+
+          <label class="font-size-option <%= currentHeroSpacing==='compact'?'selected':'' %>">
+            <input type="radio" name="hero_spacing" value="compact" <%= currentHeroSpacing==='compact'?'checked':'' %> onchange="selectHeroSpacing(this)">
+            <div class="font-size-preview" style="font-size:1rem;">▭</div>
+            <div class="theme-name">Compact</div>
+            <div class="theme-desc">Small gap below navbar</div>
+          </label>
+
+          <label class="font-size-option <%= currentHeroSpacing==='normal'?'selected':'' %>">
+            <input type="radio" name="hero_spacing" value="normal" <%= currentHeroSpacing==='normal'?'checked':'' %> onchange="selectHeroSpacing(this)">
+            <div class="font-size-preview" style="font-size:1rem;">▭ ▭</div>
+            <div class="theme-name">Normal</div>
+            <div class="theme-desc">Default recommended gap</div>
+          </label>
+
+          <label class="font-size-option <%= currentHeroSpacing==='spacious'?'selected':'' %>">
+            <input type="radio" name="hero_spacing" value="spacious" <%= currentHeroSpacing==='spacious'?'checked':'' %> onchange="selectHeroSpacing(this)">
+            <div class="font-size-preview" style="font-size:1rem;">▭ ▭ ▭</div>
+            <div class="theme-name">Spacious</div>
+            <div class="theme-desc">Extra large gap below navbar</div>
+          </label>
+
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg mt-3">✅ Apply Hero Spacing</button>
+      </form>
+    </div>
+
+    <div class="alert alert-info mt-3" style="max-width:700px;">
+      ℹ️ All of these settings apply instantly to every visitor on every page (homepage, dashboards, courses, exams). Each visitor's own Dark/Light mode toggle still works independently.
+    </div>
+  </div>
+</div>
+
+<script>
+function selectTheme(input) {
+  input.closest('form').querySelectorAll('.theme-option').forEach(o => o.classList.remove('selected'));
+  input.closest('.theme-option').classList.add('selected');
+}
+function selectFontSize(input) {
+  input.closest('form').querySelectorAll('.font-size-option').forEach(o => o.classList.remove('selected'));
+  input.closest('.font-size-option').classList.add('selected');
+}
+function selectFontFamily(input) {
+  input.closest('form').querySelectorAll('.font-size-option').forEach(o => o.classList.remove('selected'));
+  input.closest('.font-size-option').classList.add('selected');
+}
+function selectHeroSpacing(input) {
+  input.closest('form').querySelectorAll('.font-size-option').forEach(o => o.classList.remove('selected'));
+  input.closest('.font-size-option').classList.add('selected');
+}
+function selectDecoStyle(input) {
+  input.closest('form').querySelectorAll('.font-size-option').forEach(o => o.classList.remove('selected'));
+  input.closest('.font-size-option').classList.add('selected');
+}
+function selectLayoutStyle(input) {
+  input.closest('form').querySelectorAll('.font-size-option').forEach(o => o.classList.remove('selected'));
+  input.closest('.font-size-option').classList.add('selected');
+}
+</script>
+
+<%- include('../partials/footer') %>

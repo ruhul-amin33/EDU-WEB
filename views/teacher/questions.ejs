@@ -1,0 +1,64 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active: 'questions', role: 'teacher'}) %>
+  <div class="main-content">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+      <div><div class="page-title">📋 <%= lang==='bn'?'আমার প্রশ্নসমূহ':'My Questions' %></div></div>
+      <a href="/teacher/questions/add" class="btn btn-primary">➕ <%= lang==='bn'?'নতুন প্রশ্ন':'Add New' %></a>
+    </div>
+
+    <div class="filter-bar" style="margin-bottom:1.5rem;">
+      <a href="/teacher/questions" class="filter-btn <%= !filterStatus?'active':'' %>"><%= lang==='bn'?'সব':'All' %></a>
+      <a href="/teacher/questions?status=pending" class="filter-btn <%= filterStatus==='pending'?'active':'' %>">⏳ <%= lang==='bn'?'পেন্ডিং':'Pending' %></a>
+      <a href="/teacher/questions?status=approved" class="filter-btn <%= filterStatus==='approved'?'active':'' %>">✅ <%= lang==='bn'?'অনুমোদিত':'Approved' %></a>
+      <a href="/teacher/questions?status=rejected" class="filter-btn <%= filterStatus==='rejected'?'active':'' %>">❌ <%= lang==='bn'?'প্রত্যাখ্যাত':'Rejected' %></a>
+    </div>
+
+    <% if(questions.length) { %>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>#</th>
+          <th><%= lang==='bn'?'প্রশ্ন':'Question' %></th>
+          <th><%= lang==='bn'?'বিষয়':'Subject' %></th>
+          <th><%= lang==='bn'?'স্তর':'Level' %></th>
+          <th><%= lang==='bn'?'কঠিনতা':'Difficulty' %></th>
+          <th><%= lang==='bn'?'স্ট্যাটাস':'Status' %></th>
+          <th><%= lang==='bn'?'কার্যক্রম':'Action' %></th>
+        </tr></thead>
+        <tbody>
+          <% questions.forEach((q,i) => { %>
+          <tr>
+            <td><%= i+1 %></td>
+            <td style="max-width:280px;">
+              <div style="font-size:0.85rem;font-weight:500;color:var(--text);line-height:1.4;"><%= q.question_text.substring(0,80) %>...</div>
+              <% if(q.admin_comment) { %>
+              <div style="font-size:0.75rem;color:var(--danger);margin-top:0.3rem;">💬 <%= q.admin_comment.substring(0,60) %>...</div>
+              <% } %>
+            </td>
+            <td style="font-size:0.82rem;"><%= q.subject %></td>
+            <td><span class="badge badge-primary"><%= q.level.toUpperCase() %></span></td>
+            <td><span class="badge <%= q.difficulty==='easy'?'badge-success':q.difficulty==='hard'?'badge-danger':'badge-warning' %>"><%= q.difficulty %></span></td>
+            <td><span class="badge <%= q.status==='approved'?'badge-success':q.status==='rejected'?'badge-danger':'badge-warning' %>"><%= q.status %></span></td>
+            <td>
+              <% if(q.status==='rejected') { %>
+              <a href="/teacher/questions/<%= q.id %>/edit" class="btn btn-primary btn-sm">✏️ <%= lang==='bn'?'সম্পাদনা':'Edit' %></a>
+              <% } else { %>
+              <span style="font-size:0.75rem;color:var(--text3);">—</span>
+              <% } %>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <% } else { %>
+    <div class="table-wrap" style="padding:3rem;text-align:center;color:var(--text3);">
+      <div style="font-size:2.5rem;margin-bottom:0.75rem;">📝</div>
+      <p><%= lang==='bn'?'কোনো প্রশ্ন নেই। এখনই যোগ করুন।':'No questions yet. Start adding!' %></p>
+      <a href="/teacher/questions/add" class="btn btn-primary" style="margin-top:1rem;">➕ Add Question</a>
+    </div>
+    <% } %>
+  </div>
+</div>
+<%- include('../partials/footer') %>

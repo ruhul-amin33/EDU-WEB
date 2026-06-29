@@ -1,0 +1,89 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active: 'questions', role: 'teacher'}) %>
+  <div class="main-content">
+    <div class="page-header">
+      <div class="page-title">✏️ <%= lang==='bn'?'প্রশ্ন সম্পাদনা করুন':'Edit Question' %></div>
+    </div>
+
+    <% if(question.admin_comment) { %>
+    <div class="alert alert-error" style="margin-bottom:1.5rem;">
+      💬 <strong>Admin Comment:</strong> <%= question.admin_comment %>
+    </div>
+    <% } %>
+
+    <div style="max-width:800px;">
+      <div class="table-wrap" style="padding:2rem;">
+        <form action="/teacher/questions/<%= question.id %>/edit" method="POST">
+          <div class="form-group">
+            <label class="form-label">Question Text (English) *</label>
+            <textarea name="question_text" class="form-control" rows="3" required><%= question.question_text %></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Question Text (Bangla)</label>
+            <textarea name="question_text_bn" class="form-control" rows="3"><%= question.question_text_bn||'' %></textarea>
+          </div>
+          <div class="divider"></div>
+          <% ['A','B','C','D'].forEach(opt => { %>
+          <div class="form-group">
+            <label class="form-label">Option <%= opt %></label>
+            <input type="text" name="option_<%= opt.toLowerCase() %>" class="form-control" required value="<%= question['option_'+opt.toLowerCase()]||'' %>">
+          </div>
+          <% }) %>
+          <div class="form-group">
+            <label class="form-label">Correct Answer *</label>
+            <select name="correct_answer" class="form-control" required>
+              <% ['a','b','c','d'].forEach(o => { %><option value="<%= o %>" <%= question.correct_answer===o?'selected':'' %>><%= o.toUpperCase() %></option><% }) %>
+            </select>
+          </div>
+          <div class="divider"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label">Subject *</label>
+              <input type="text" name="subject" class="form-control" required value="<%= question.subject %>">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Chapter</label>
+              <input type="text" name="chapter" class="form-control" value="<%= question.chapter||'' %>">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Level *</label>
+              <select name="level" class="form-control" required>
+                <option value="ssc" <%= question.level==='ssc'?'selected':'' %>>SSC</option>
+                <option value="hsc" <%= question.level==='hsc'?'selected':'' %>>HSC</option>
+                <option value="admission" <%= question.level==='admission'?'selected':'' %>>Admission</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Difficulty</label>
+              <select name="difficulty" class="form-control">
+                <% ['easy','medium','hard'].forEach(d => { %><option value="<%= d %>" <%= question.difficulty===d?'selected':'' %>><%= d %></option><% }) %>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Year</label>
+              <input type="text" name="exam_year" class="form-control" value="<%= question.exam_year||'' %>" placeholder="e.g. 2023">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Board/University</label>
+              <input type="text" name="board" class="form-control" value="<%= question.board||'' %>" placeholder="e.g. Dhaka Board, DU">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Explanation (English)</label>
+            <textarea name="explanation" class="form-control" rows="3"><%= question.explanation||'' %></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Explanation (Bangla)</label>
+            <textarea name="explanation_bn" class="form-control" rows="3"><%= question.explanation_bn||'' %></textarea>
+          </div>
+          <div style="display:flex;gap:1rem;">
+            <button type="submit" class="btn btn-primary btn-lg">📤 Update & Resubmit</button>
+            <a href="/teacher/questions" class="btn btn-secondary btn-lg">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

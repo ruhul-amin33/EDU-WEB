@@ -1,0 +1,101 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active: 'questions', role: 'admin'}) %>
+  <div class="main-content">
+    <div class="page-header"><div class="page-title">❓ Manage Questions</div></div>
+    <div class="filter-bar" style="margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem;">
+      <div>
+        <a href="/admin/questions" class="filter-btn <%= !filterStatus?'active':'' %>">All</a>
+        <a href="/admin/questions?status=pending" class="filter-btn <%= filterStatus==='pending'?'active':'' %>">⏳ Pending</a>
+        <a href="/admin/questions?status=approved" class="filter-btn <%= filterStatus==='approved'?'active':'' %>">✅ Approved</a>
+        <a href="/admin/questions?status=rejected" class="filter-btn <%= filterStatus==='rejected'?'active':'' %>">❌ Rejected</a>
+      </div>
+      <div style="display:flex;align-items:center;gap:.75rem;">
+        <label style="display:flex;align-items:center;gap:.4rem;font-size:.85rem;cursor:pointer;">
+          <input type="checkbox" id="selectAllQ" onchange="toggleSelectAllQ(this)"> <%= lang==='bn'?'সব সিলেক্ট করুন':'Select All' %>
+        </label>
+        <button type="button" class="btn btn-success btn-sm" onclick="submitBulkApprove()">✅ <%= lang==='bn'?'নির্বাচিতগুলো অনুমোদন করুন':'Approve Selected' %></button>
+      </div>
+    </div>
+    <% questions.forEach((q,i) => { %>
+    <div class="table-wrap" style="padding:1.5rem;margin-bottom:1rem;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.75rem;margin-bottom:1rem;">
+        <div style="display:flex;align-items:flex-start;gap:.65rem;">
+          <% if(q.status!=='approved') { %>
+          <input type="checkbox" class="bulk-q-checkbox" value="<%= q.id %>" style="margin-top:.3rem;width:18px;height:18px;cursor:pointer;">
+          <% } %>
+          <div>
+            <span class="badge <%= q.status==='approved'?'badge-success':q.status==='rejected'?'badge-danger':'badge-warning' %>"><%= q.status.toUpperCase() %></span>
+            <span class="badge badge-secondary" style="margin-left:0.5rem;"><%= q.subject %></span>
+            <span class="badge badge-primary" style="margin-left:0.5rem;"><%= q.level.toUpperCase() %></span>
+            <span style="font-size:0.78rem;color:var(--text3);margin-left:0.75rem;">by <%= q.teacher_name %></span>
+          </div>
+        </div>
+        <span style="font-size:0.75rem;color:var(--text3);"><%= new Date(q.created_at).toLocaleDateString() %></span>
+      </div>
+      <div style="font-weight:600;color:var(--text);margin-bottom:0.75rem;line-height:1.5;"><%= q.question_text %></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;margin-bottom:0.75rem;">
+        <% ['a','b','c','d'].forEach(opt => { %>
+        <div style="font-size:0.82rem;padding:0.4rem 0.75rem;border-radius:6px;background:<%= q.correct_answer===opt?'rgba(34,197,94,0.12)':'var(--bg3)' %>;border:1px solid <%= q.correct_answer===opt?'rgba(34,197,94,0.3)':'var(--border)' %>;color:<%= q.correct_answer===opt?'var(--success)':'var(--text2)' %>;">
+          <strong><%= opt.toUpperCase() %>.</strong> <%= q['option_'+opt] %>
+        </div>
+        <% }) %>
+      </div>
+      <% if(q.explanation) { %><div class="explain-box" style="margin-bottom:0.75rem;font-size:0.82rem;"><strong>💡 Explanation:</strong> <%= q.explanation %></div><% } %>
+      <% if(q.admin_comment) { %><div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:0.6rem 0.9rem;font-size:0.8rem;color:var(--danger);margin-bottom:0.75rem;">💬 Admin comment: <%= q.admin_comment %></div><% } %>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <% if(q.status!=='approved') { %>
+        <form action="/admin/questions/<%= q.id %>/approve" method="POST"><button class="btn btn-success btn-sm">✅ Approve</button></form>
+        <% } %>
+        <% if(q.status!=='rejected') { %>
+        <button onclick="openCommentModal(<%= q.id %>)" class="btn btn-secondary btn-sm">💬 Comment & Reject</button>
+        <% } %>
+        <form action="/admin/questions/<%= q.id %>/delete" method="POST"><button class="btn btn-danger btn-sm" data-confirm="Delete this question?">🗑️ Delete</button></form>
+      </div>
+    </div>
+    <% }) %>
+    <% if(!questions.length) { %>
+    <div class="table-wrap" style="padding:3rem;text-align:center;color:var(--text3);">No questions found.</div>
+    <% } %>
+  </div>
+</div>
+
+<!-- Comment Modal -->
+<div class="modal-overlay" id="commentModal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">💬 Comment & Reject</span><button class="modal-close" onclick="closeModal('commentModal')">✕</button></div>
+    <form id="commentForm" method="POST">
+      <div class="form-group">
+        <label class="form-label">Comment for Teacher</label>
+        <textarea name="comment" class="form-control" rows="4" required placeholder="Explain what needs to be fixed..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-danger btn-block">Send Comment & Reject</button>
+    </form>
+  </div>
+</div>
+<script>
+function openCommentModal(id) {
+  document.getElementById('commentForm').action = '/admin/questions/'+id+'/comment';
+  openModal('commentModal');
+}
+function toggleSelectAllQ(checkbox) {
+  document.querySelectorAll('.bulk-q-checkbox').forEach(cb => cb.checked = checkbox.checked);
+}
+function submitBulkApprove() {
+  const checked = document.querySelectorAll('.bulk-q-checkbox:checked');
+  if (!checked.length) { alert('<%= lang==="bn"?"আগে অন্তত একটি প্রশ্ন সিলেক্ট করুন।":"Select at least one question first." %>'); return; }
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = '/admin/questions/bulk-approve';
+  checked.forEach(cb => {
+    const inp = document.createElement('input');
+    inp.type = 'hidden';
+    inp.name = 'ids[]';
+    inp.value = cb.value;
+    form.appendChild(inp);
+  });
+  document.body.appendChild(form);
+  form.submit();
+}
+</script>
+<%- include('../partials/footer') %>

@@ -1,0 +1,77 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active: 'templates', role: 'student'}) %>
+  <div class="main-content">
+    <div class="page-header">
+      <div class="page-title">🎓 <%= lang==='bn'?'শিক্ষক/অ্যাডমিনের তৈরি পরীক্ষা':'Teacher-Set Exams' %></div>
+      <div class="page-subtitle"><%= lang==='bn'?'আপনার শিক্ষক বা অ্যাডমিনের নির্ধারিত পরীক্ষা দিন':'Take exams set by your teachers or admin' %></div>
+    </div>
+
+    <!-- Filters -->
+    <div class="table-wrap" style="padding:1.25rem 1.5rem;margin-bottom:1.5rem;">
+      <form method="GET" style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end;">
+        <div class="form-group" style="margin:0;min-width:120px;">
+          <label class="form-label"><%=lang==='bn'?'স্তর':'Level'%></label>
+          <select name="level" class="form-control">
+            <option value=""><%=lang==='bn'?'সব':'All'%></option>
+            <option value="ssc" <%=filters.level==='ssc'?'selected':''%>>SSC</option>
+            <option value="hsc" <%=filters.level==='hsc'?'selected':''%>>HSC</option>
+            <option value="admission" <%=filters.level==='admission'?'selected':''%>><%=lang==='bn'?'ভর্তি':'Admission'%></option>
+          </select>
+        </div>
+        <div class="form-group" style="margin:0;min-width:140px;">
+          <label class="form-label"><%=lang==='bn'?'বিভাগ':'Stream'%></label>
+          <select name="stream" class="form-control">
+            <option value=""><%=lang==='bn'?'সব':'All'%></option>
+            <option value="science" <%=filters.stream==='science'?'selected':''%>><%=lang==='bn'?'বিজ্ঞান':'Science'%></option>
+            <option value="arts" <%=filters.stream==='arts'?'selected':''%>><%=lang==='bn'?'মানবিক':'Arts'%></option>
+            <option value="commerce" <%=filters.stream==='commerce'?'selected':''%>><%=lang==='bn'?'বাণিজ্য':'Commerce'%></option>
+          </select>
+        </div>
+        <% if (subjects.length) { %>
+        <div class="form-group" style="margin:0;min-width:160px;">
+          <label class="form-label"><%=lang==='bn'?'বিষয়':'Subject'%></label>
+          <select name="subject" class="form-control">
+            <option value=""><%=lang==='bn'?'সব বিষয়':'All Subjects'%></option>
+            <% subjects.forEach(function(s){ %><option value="<%=s.subject%>" <%=filters.subject===s.subject?'selected':''%>><%=s.subject%></option><% }) %>
+          </select>
+        </div>
+        <% } %>
+        <button type="submit" class="btn btn-primary"><%=lang==='bn'?'ফিল্টার':'Filter'%></button>
+        <a href="/exam/templates" class="btn btn-secondary"><%=lang==='bn'?'রিসেট':'Reset'%></a>
+      </form>
+    </div>
+
+    <% if (templates.length) { %>
+      <% templates.forEach(function(t) { %>
+      <div class="table-wrap" style="padding:1.5rem;margin-bottom:1rem;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
+          <div>
+            <div style="font-weight:800;font-size:1.05rem;color:var(--text);margin-bottom:.4rem;"><%= t.title %></div>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem;">
+              <span class="badge badge-primary"><%= t.level.toUpperCase() %></span>
+              <span class="badge badge-secondary"><%= t.stream %></span>
+              <% if (t.subject) { %><span class="badge badge-secondary"><%= t.subject %></span><% } %>
+            </div>
+            <div style="font-size:.85rem;color:var(--text2);">
+              📝 <%= t.question_count %> <%=lang==='bn'?'টি প্রশ্ন':'questions'%> &nbsp;·&nbsp;
+              ⏱️ <%= t.time_limit %> <%=lang==='bn'?'মিনিট':'minutes'%> &nbsp;·&nbsp;
+              👨‍🏫 <%= t.creator_name %>
+            </div>
+          </div>
+          <form action="/exam/templates/<%= t.id %>/start" method="POST">
+            <button type="submit" class="btn btn-primary btn-lg">🚀 <%=lang==='bn'?'পরীক্ষা শুরু করুন':'Start Exam'%></button>
+          </form>
+        </div>
+      </div>
+      <% }) %>
+    <% } else { %>
+      <div class="table-wrap" style="padding:3rem;text-align:center;color:var(--text3);">
+        <div style="font-size:2.5rem;margin-bottom:.7rem;">📭</div>
+        <p><%=lang==='bn'?'এখনো কোনো পরীক্ষা সেট করা হয়নি।':'No exams have been set yet.'%></p>
+        <a href="/exam/setup" class="btn btn-secondary" style="margin-top:1rem;"><%=lang==='bn'?'নিজের পরীক্ষা তৈরি করুন':'Create your own exam'%></a>
+      </div>
+    <% } %>
+  </div>
+</div>
+<%- include('../partials/footer') %>

@@ -1,0 +1,174 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active:'browse', role:'student'}) %>
+  <div class="main-content">
+
+    <div class="page-header">
+      <div>
+        <div class="page-title">📖 <%=lang==='bn'?'প্রশ্ন পড়ুন':'Browse Questions'%></div>
+        <div class="page-subtitle"><%=lang==='bn'?'নিজের মতো সময় নিয়ে প্রশ্ন ও উত্তর পড়ুন — কোনো টাইমার নেই':'Read questions and answers at your own pace — no timer, no pressure'%></div>
+      </div>
+      <a href="/exam/setup" class="btn btn-primary btn-sm">📝 <%=lang==='bn'?'পরীক্ষা দিন':'Take Timed Exam'%></a>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="table-wrap" style="padding:1.25rem 1.5rem;margin-bottom:1.5rem;">
+      <form method="GET" style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end;">
+        <div class="form-group" style="margin:0;min-width:120px;">
+          <label class="form-label"><%=lang==='bn'?'স্তর':'Level'%></label>
+          <select name="level" class="form-control">
+            <option value=""><%=lang==='bn'?'সব':'All'%></option>
+            <option value="ssc" <%=filters.level==='ssc'?'selected':''%>>SSC</option>
+            <option value="hsc" <%=filters.level==='hsc'?'selected':''%>>HSC</option>
+            <option value="admission" <%=filters.level==='admission'?'selected':''%>><%=lang==='bn'?'ভর্তি':'Admission'%></option>
+          </select>
+        </div>
+        <div class="form-group" style="margin:0;min-width:140px;">
+          <label class="form-label"><%=lang==='bn'?'বিভাগ':'Stream'%></label>
+          <select name="stream" class="form-control">
+            <option value=""><%=lang==='bn'?'সব':'All'%></option>
+            <option value="science" <%=filters.stream==='science'?'selected':''%>><%=lang==='bn'?'বিজ্ঞান':'Science'%></option>
+            <option value="arts" <%=filters.stream==='arts'?'selected':''%>><%=lang==='bn'?'মানবিক':'Arts'%></option>
+            <option value="commerce" <%=filters.stream==='commerce'?'selected':''%>><%=lang==='bn'?'বাণিজ্য':'Commerce'%></option>
+          </select>
+        </div>
+        <div class="form-group" style="margin:0;min-width:160px;">
+          <label class="form-label"><%=lang==='bn'?'বিষয়':'Subject'%></label>
+          <select name="subject" class="form-control">
+            <option value=""><%=lang==='bn'?'সব বিষয়':'All Subjects'%></option>
+            <% subjects.forEach(function(s){ %><option value="<%=s.subject%>" <%=filters.subject===s.subject?'selected':''%>><%=s.subject%></option><% }) %>
+          </select>
+        </div>
+        <% if(chapters.length){ %>
+        <div class="form-group" style="margin:0;min-width:160px;">
+          <label class="form-label"><%=lang==='bn'?'অধ্যায়':'Chapter'%></label>
+          <select name="chapter" class="form-control">
+            <option value=""><%=lang==='bn'?'সব অধ্যায়':'All Chapters'%></option>
+            <% chapters.forEach(function(c){ %><option value="<%=c.chapter%>" <%=filters.chapter===c.chapter?'selected':''%>><%=c.chapter%></option><% }) %>
+          </select>
+        </div>
+        <% } %>
+        <div class="form-group" style="margin:0;min-width:120px;">
+          <label class="form-label"><%=lang==='bn'?'কঠিনতা':'Difficulty'%></label>
+          <select name="difficulty" class="form-control">
+            <option value=""><%=lang==='bn'?'সব':'All'%></option>
+            <option value="easy" <%=filters.difficulty==='easy'?'selected':''%>><%=lang==='bn'?'সহজ':'Easy'%></option>
+            <option value="medium" <%=filters.difficulty==='medium'?'selected':''%>><%=lang==='bn'?'মধ্যম':'Medium'%></option>
+            <option value="hard" <%=filters.difficulty==='hard'?'selected':''%>><%=lang==='bn'?'কঠিন':'Hard'%></option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary"><%=lang==='bn'?'ফিল্টার':'Filter'%></button>
+        <a href="/exam/browse" class="btn btn-secondary"><%=lang==='bn'?'রিসেট':'Reset'%></a>
+      </form>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:.6rem;">
+      <span style="font-size:.9rem;color:var(--text2);font-weight:600;"><%=totalQuestions%> <%=lang==='bn'?'টি প্রশ্ন পাওয়া গেছে':'questions found'%></span>
+    </div>
+
+    <% if(questions.length) { %>
+    <% questions.forEach(function(q, i) { %>
+    <div class="question-card browse-q-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.85rem;flex-wrap:wrap;gap:.5rem;">
+        <div class="question-num"><%=lang==='bn'?'প্রশ্ন':'Question'%> #<%=q.id%></div>
+        <div style="display:flex;gap:.4rem;flex-wrap:wrap;justify-content:flex-end;">
+          <% if(q.board){ %><span class="badge badge-secondary"><%=q.board%></span><% } %>
+          <% if(q.exam_year){ %><span class="badge badge-secondary"><%=q.exam_year%></span><% } %>
+          <span class="badge <%=q.difficulty==='easy'?'badge-success':q.difficulty==='hard'?'badge-danger':'badge-warning'%>"><%=q.difficulty%></span>
+        </div>
+      </div>
+      <div class="question-text"><%=lang==='bn'&&q.question_text_bn?q.question_text_bn:q.question_text%></div>
+
+      <div class="options" data-revealed="false" data-correct-text="<%=lang==='bn'?'সঠিক':'Correct'%>">
+        <% ['a','b','c','d'].forEach(function(opt){ %>
+        <div class="option-label" data-correct="<%=q.correct_answer===opt%>" onclick="revealBrowseAnswer(this)">
+          <span class="option-key"><%=opt.toUpperCase()%></span>
+          <span class="option-text"><%=q['option_'+opt]%></span>
+        </div>
+        <% }) %>
+      </div>
+
+      <% if(q.explanation) { %>
+      <div class="explain-box" style="display:none;">
+        <strong>💡 <%=lang==='bn'?'ব্যাখ্যা':'Explanation'%>:</strong><br>
+        <%=lang==='bn'&&q.explanation_bn?q.explanation_bn:q.explanation%>
+      </div>
+      <% } %>
+
+      <% if(q.subject || q.chapter) { %>
+      <div style="display:flex;gap:.4rem;flex-wrap:wrap;justify-content:flex-end;margin-top:.85rem;padding-top:.75rem;border-top:1px solid var(--border);">
+        <% if(q.subject){ %><span class="badge badge-primary"><%=q.subject%></span><% } %>
+        <% if(q.chapter){ %><span class="badge badge-secondary"><%=q.chapter%></span><% } %>
+      </div>
+      <% } %>
+    </div>
+    <% }) %>
+
+    <!-- Pagination -->
+    <% if(totalPages>1) { %>
+    <div class="pagination">
+      <% if(pageNum>1) { %>
+      <a href="?<%=new URLSearchParams({...filters,page:pageNum-1}).toString()%>" class="page-btn">‹</a>
+      <% } %>
+      <% for(let p=Math.max(1,pageNum-2); p<=Math.min(totalPages,pageNum+2); p++) { %>
+      <a href="?<%=new URLSearchParams({...filters,page:p}).toString()%>" class="page-btn <%=p===pageNum?'active':''%>"><%=p%></a>
+      <% } %>
+      <% if(pageNum<totalPages) { %>
+      <a href="?<%=new URLSearchParams({...filters,page:pageNum+1}).toString()%>" class="page-btn">›</a>
+      <% } %>
+    </div>
+    <% } %>
+
+    <% } else { %>
+    <div class="table-wrap" style="padding:3rem;text-align:center;color:var(--text3);">
+      <div style="font-size:2.5rem;margin-bottom:.75rem;">🔍</div>
+      <p><%=lang==='bn'?'কোনো প্রশ্ন পাওয়া যায়নি':'No questions found for these filters'%></p>
+    </div>
+    <% } %>
+
+  </div>
+</div>
+
+<script>
+function revealBrowseAnswer(el) {
+  const container = el.parentElement;
+  if (container.dataset.revealed === 'true') return; // already answered, lock it
+  container.dataset.revealed = 'true';
+
+  const correctText = container.dataset.correctText || 'Correct';
+  const isCorrect = el.dataset.correct === 'true';
+
+  container.querySelectorAll('.option-label').forEach(function (o) {
+    o.style.cursor = 'default';
+    o.onclick = null;
+    if (o.dataset.correct === 'true') {
+      o.classList.add('option-correct');
+      const mark = document.createElement('span');
+      mark.style.marginLeft = 'auto';
+      mark.style.fontSize = '.78rem';
+      mark.style.color = 'var(--success)';
+      mark.style.fontWeight = '700';
+      mark.textContent = '✓ ' + correctText;
+      o.appendChild(mark);
+    }
+  });
+
+  if (!isCorrect) {
+    el.classList.add('option-wrong');
+    const mark = document.createElement('span');
+    mark.style.marginLeft = 'auto';
+    mark.style.fontSize = '.78rem';
+    mark.style.color = 'var(--danger)';
+    mark.style.fontWeight = '700';
+    mark.textContent = '✗';
+    el.appendChild(mark);
+  }
+
+  const explainBox = container.nextElementSibling;
+  if (explainBox && explainBox.classList.contains('explain-box')) {
+    explainBox.style.display = 'block';
+  }
+}
+</script>
+
+<%- include('../partials/footer') %>

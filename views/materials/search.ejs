@@ -1,0 +1,52 @@
+<%- include('../partials/layout') %>
+<div style="padding-top:var(--nav-h);min-height:100vh;background:var(--bg);">
+<div class="container" style="padding:2.5rem 1rem;">
+
+  <div class="breadcrumb"><a href="/materials">🏠 <%=lang==='bn'?'ম্যাটেরিয়াল':'Materials'%></a><span>/</span><span><%=lang==='bn'?'অনুসন্ধান':'Search'%>: "<%=query%>"</span></div>
+
+  <form method="GET" style="max-width:480px;margin-bottom:2rem;">
+    <div style="display:flex;gap:.6rem;">
+      <input type="text" name="q" value="<%=query%>" class="form-control" placeholder="🔍 <%=lang==='bn'?'খুঁজুন...':'Search...'%>">
+      <button type="submit" class="btn btn-primary"><%=lang==='bn'?'খুঁজুন':'Search'%></button>
+    </div>
+  </form>
+
+  <% if(folders.length){ %>
+  <div class="mm-section-label mb-2">📁 <%=lang==='bn'?'ফোল্ডার':'Folders'%> (<%=folders.length%>)</div>
+  <div class="folder-grid mb-3">
+    <% folders.forEach(function(f){ %>
+    <a href="/materials/browse/<%=f.id%>" class="folder-item">
+      <div class="icon"><%=f.icon||'📁'%></div>
+      <div class="name"><%=lang==='bn'&&f.name_bn?f.name_bn:f.name%></div>
+    </a>
+    <% }) %>
+  </div>
+  <% } %>
+
+  <div class="mm-section-label mb-2">📄 <%=lang==='bn'?'ফাইল':'Files'%> (<%=materials.length%>)</div>
+  <% if(materials.length){ %>
+  <div class="materials-folder-grid">
+    <% materials.forEach(function(m){ %>
+    <div class="folder-card">
+      <div class="folder-card-thumb" style="background:linear-gradient(135deg,var(--primary),var(--primary-light));"><span style="font-size:2.2rem;">📄</span></div>
+      <div class="folder-card-body">
+        <div class="folder-card-title"><%=lang==='bn'&&m.title_bn?m.title_bn:m.title%></div>
+        <div class="folder-card-meta"><%=m.subject||''%><%=m.year?' • '+m.year:''%></div>
+        <div class="folder-card-footer">
+          <span class="folder-card-count">⬇️ <%=m.download_count%></span>
+          <a href="/materials/<%=m.id%>/download" class="btn btn-primary btn-sm">📥 <%=lang==='bn'?'ডাউনলোড':'Download'%></a>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+  <% } else if(!folders.length) { %>
+  <div style="text-align:center;padding:3rem;color:var(--text3);">
+    <div style="font-size:2.5rem;margin-bottom:.7rem;">🔍</div>
+    <p><%=lang==='bn'?'কোনো ফলাফল পাওয়া যায়নি':'No results found'%></p>
+  </div>
+  <% } %>
+
+</div>
+</div>
+<%- include('../partials/footer') %>

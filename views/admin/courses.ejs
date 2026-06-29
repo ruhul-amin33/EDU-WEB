@@ -1,0 +1,104 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active: 'courses', role: 'admin'}) %>
+  <div class="main-content">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <div class="page-title">🎓 Manage Courses</div>
+        <div class="page-subtitle">Manage regular courses and Admission-prep courses (Session + Board)</div>
+      </div>
+      <button onclick="openModal('addCourseModal')" class="btn btn-primary">+ Add Course</button>
+    </div>
+    <div class="table-wrap">
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>#</th><th>Title</th><th>Level</th><th>Session / Board</th><th>Price</th><th>Enrolled</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+          <% courses.forEach((c,i) => { %>
+          <tr>
+            <td><%= i+1 %></td>
+            <td style="font-weight:600;font-size:0.88rem;">
+              <%= c.title %>
+              <% if (c.is_admission) { %><span class="badge badge-warning" style="margin-left:.4rem;">🎓 Admission</span><% } %>
+              <div style="font-size:0.75rem;color:var(--text3);">by <%= c.instructor||'Parafin' %></div>
+            </td>
+            <td><span class="badge badge-primary"><%= c.level.toUpperCase() %></span></td>
+            <td style="font-size:.82rem;">
+              <% if (c.session) { %>HSC <%= c.session %><% } %>
+              <% if (c.board) { %><br><span style="color:var(--text3);"><%= c.board %> Board</span><% } %>
+              <% if (!c.session && !c.board) { %>—<% } %>
+            </td>
+            <td><%= c.price==0?'Free':'৳'+c.price %></td>
+            <td><%= c.enrolled_count %></td>
+            <td><span class="badge <%= c.is_published?'badge-success':'badge-secondary' %>"><%= c.is_published?'Published':'Draft' %></span></td>
+            <td style="display:flex;gap:0.4rem;">
+              <form action="/admin/courses/<%= c.id %>/toggle" method="POST"><button class="btn btn-secondary btn-sm"><%= c.is_published?'Unpublish':'Publish' %></button></form>
+              <form action="/admin/courses/<%= c.id %>/delete" method="POST"><button class="btn btn-danger btn-sm" data-confirm="Delete course?">🗑️</button></form>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="addCourseModal">
+  <div class="modal" style="max-width:600px;">
+    <div class="modal-header"><span class="modal-title">🎓 Add Course</span><button class="modal-close" onclick="closeModal('addCourseModal')">✕</button></div>
+    <form action="/admin/courses/add" method="POST" enctype="multipart/form-data">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group"><label class="form-label">Title (EN)</label><input type="text" name="title" class="form-control" required></div>
+        <div class="form-group"><label class="form-label">Title (BN)</label><input type="text" name="title_bn" class="form-control"></div>
+        <div class="form-group"><label class="form-label">Level</label><select name="level" class="form-control"><option value="ssc">SSC</option><option value="hsc">HSC</option><option value="other">Other</option></select></div>
+        <div class="form-group"><label class="form-label">Stream</label><select name="stream" class="form-control"><option value="all">All</option><option value="science">Science</option><option value="arts">Arts</option><option value="commerce">Commerce</option></select></div>
+        <div class="form-group"><label class="form-label">Price (৳)</label><input type="number" name="price" class="form-control" value="0" min="0"></div>
+        <div class="form-group"><label class="form-label">Original Price (৳)</label><input type="number" name="original_price" class="form-control" value="0" min="0"></div>
+        <div class="form-group"><label class="form-label">Instructor</label><input type="text" name="instructor" class="form-control"></div>
+        <div class="form-group"><label class="form-label">Duration</label><input type="text" name="duration" class="form-control" placeholder="e.g. 3 months"></div>
+        <div class="form-group"><label class="form-label">Total Lessons</label><input type="number" name="total_lessons" class="form-control" value="0"></div>
+        <div class="form-group"><label class="form-label">Thumbnail</label><input type="file" name="thumbnail" class="form-control" accept="image/*"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Description (EN)</label><textarea name="description" class="form-control" rows="2"></textarea></div>
+      <div class="form-group"><label class="form-label">Description (BN)</label><textarea name="description_bn" class="form-control" rows="2"></textarea></div>
+
+      <div class="divider"></div>
+      <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;">
+        <input type="checkbox" name="is_admission" id="isAdmissionCheck" value="1" style="width:18px;height:18px;cursor:pointer;" onchange="document.getElementById('admissionFields').style.display=this.checked?'grid':'none'">
+        <label for="isAdmissionCheck" style="font-weight:700;cursor:pointer;margin:0;">🎓 This is an Admission Preparation Course</label>
+      </div>
+      <div id="admissionFields" style="display:none;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+        <div class="form-group">
+          <label class="form-label">📅 HSC Session</label>
+          <select name="session" class="form-control">
+            <option value="">— Select —</option>
+            <option value="2025">HSC 2025</option>
+            <option value="2026">HSC 2026</option>
+            <option value="2027">HSC 2027</option>
+            <option value="2028">HSC 2028</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">🏛️ Education Board</label>
+          <select name="board" class="form-control">
+            <option value="">— Select —</option>
+            <option value="Dhaka">Dhaka</option>
+            <option value="Rajshahi">Rajshahi</option>
+            <option value="Chittagong">Chittagong</option>
+            <option value="Sylhet">Sylhet</option>
+            <option value="Barisal">Barisal</option>
+            <option value="Comilla">Comilla</option>
+            <option value="Dinajpur">Dinajpur</option>
+            <option value="Jessore">Jessore</option>
+            <option value="Mymensingh">Mymensingh</option>
+            <option value="Madrasah">Madrasah</option>
+            <option value="Technical (BTEB)">Technical (BTEB)</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block">Add Course</button>
+    </form>
+  </div>
+</div>
+<%- include('../partials/footer') %>

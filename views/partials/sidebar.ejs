@@ -1,0 +1,59 @@
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">🎯 Parafin</div>
+
+  <% if (typeof role !== 'undefined' && role === 'admin') { %>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section">Main</div>
+      <a href="/admin" class="sidebar-link <%= active === 'dashboard' ? 'active' : '' %>"><span class="icon">📊</span> Dashboard</a>
+      <div class="sidebar-section">Content</div>
+      <a href="/admin/materials" class="sidebar-link <%= active === 'materials' ? 'active' : '' %>"><span class="icon">📁</span> Material Manager</a>
+      <a href="/admin/courses" class="sidebar-link <%= active === 'courses' ? 'active' : '' %>"><span class="icon">🎓</span> Courses</a>
+      <a href="/admin/exam-results" class="sidebar-link <%= active === 'exam-results' ? 'active' : '' %>"><span class="icon">📊</span> Exam Results</a>
+      <div class="sidebar-section">Moderation</div>
+      <a href="/admin/questions" class="sidebar-link <%= active === 'questions' ? 'active' : '' %>"><span class="icon">❓</span> Questions</a>
+      <a href="/teacher/questions/add" class="sidebar-link <%= active === 'add-q' ? 'active' : '' %>"><span class="icon">➕</span> Add Question</a>
+      <a href="/teacher/questions/bulk-add" class="sidebar-link <%= active === 'bulk-add-q' ? 'active' : '' %>"><span class="icon">📥</span> Bulk Add Questions</a>
+      <a href="/teacher/set-exam" class="sidebar-link <%= active === 'set-exam' ? 'active' : '' %>"><span class="icon">📝</span> Set Exam</a>
+      <a href="/admin/reports" class="sidebar-link <%= active === 'reports' ? 'active' : '' %>"><span class="icon">⚠️</span> Reports</a>
+      <a href="/admin/reviews" class="sidebar-link <%= active === 'reviews' ? 'active' : '' %>"><span class="icon">⭐</span> Reviews</a>
+      <div class="sidebar-section">Management</div>
+      <a href="/admin/purchases" class="sidebar-link <%= active === 'purchases' ? 'active' : '' %>"><span class="icon">💳</span> Purchases</a>
+      <a href="/admin/team" class="sidebar-link <%= active === 'team' ? 'active' : '' %>"><span class="icon">👥</span> Team</a>
+      <a href="/admin/users" class="sidebar-link <%= active === 'users' ? 'active' : '' %>"><span class="icon">👤</span> Users</a>
+      <div class="sidebar-section">Appearance</div>
+      <a href="/admin/content" class="sidebar-link <%= active === 'content' ? 'active' : '' %>"><span class="icon">✏️</span> Site Content</a>
+      <a href="/admin/appearance" class="sidebar-link <%= active === 'appearance' ? 'active' : '' %>"><span class="icon">🎨</span> Appearance</a>
+      <div class="sidebar-section">Site</div>
+      <a href="/" class="sidebar-link"><span class="icon">🌐</span> View Site</a>
+    </nav>
+
+  <% } else if (typeof role !== 'undefined' && role === 'teacher') { %>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section">Main</div>
+      <a href="/teacher" class="sidebar-link <%= active === 'dashboard' ? 'active' : '' %>"><span class="icon">📊</span> <%= lang === 'bn' ? 'ড্যাশবোর্ড' : 'Dashboard' %></a>
+      <div class="sidebar-section"><%= lang === 'bn' ? 'প্রশ্ন' : 'Questions' %></div>
+      <a href="/teacher/questions/add" class="sidebar-link <%= active === 'add-q' ? 'active' : '' %>"><span class="icon">➕</span> <%= lang === 'bn' ? 'প্রশ্ন যোগ করুন' : 'Add Question' %></a>
+      <a href="/teacher/questions/bulk-add" class="sidebar-link <%= active === 'bulk-add-q' ? 'active' : '' %>"><span class="icon">📥</span> <%= lang === 'bn' ? 'একসাথে অনেক প্রশ্ন' : 'Bulk Add Questions' %></a>
+      <a href="/teacher/questions" class="sidebar-link <%= active === 'questions' ? 'active' : '' %>"><span class="icon">📋</span> <%= lang === 'bn' ? 'আমার প্রশ্নসমূহ' : 'My Questions' %></a>
+      <a href="/teacher/set-exam" class="sidebar-link <%= active === 'set-exam' ? 'active' : '' %>"><span class="icon">📝</span> <%= lang === 'bn' ? 'পরীক্ষা সেট করুন' : 'Set Exam' %></a>
+      <div class="sidebar-section"><%= lang === 'bn' ? 'অন্যান্য' : 'Other' %></div>
+      <a href="/" class="sidebar-link"><span class="icon">🌐</span> <%= lang === 'bn' ? 'সাইট দেখুন' : 'View Site' %></a>
+    </nav>
+
+  <% } else { %>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section"><%= lang === 'bn' ? 'প্রধান' : 'Main' %></div>
+      <a href="/student" class="sidebar-link <%= active === 'dashboard' ? 'active' : '' %>"><span class="icon">🏠</span> <%= lang === 'bn' ? 'ড্যাশবোর্ড' : 'Dashboard' %></a>
+      <div class="sidebar-section"><%= lang === 'bn' ? 'শিক্ষা' : 'Learning' %></div>
+      <a href="/exam/browse" class="sidebar-link <%= active === 'browse' ? 'active' : '' %>"><span class="icon">📖</span> <%= lang === 'bn' ? 'প্রশ্ন পড়ুন' : 'Browse Questions' %></a>
+      <a href="/exam/setup" class="sidebar-link <%= active === 'exam' ? 'active' : '' %>"><span class="icon">📝</span> <%= lang === 'bn' ? 'পরীক্ষা দিন' : 'Take Exam' %></a>
+      <a href="/exam/templates" class="sidebar-link <%= active === 'templates' ? 'active' : '' %>"><span class="icon">🎓</span> <%= lang === 'bn' ? 'শিক্ষকের পরীক্ষা' : 'Teacher-Set Exams' %></a>
+      <a href="/exam/history/all" class="sidebar-link <%= active === 'history' ? 'active' : '' %>"><span class="icon">📊</span> <%= lang === 'bn' ? 'পরীক্ষার ইতিহাস' : 'Exam History' %></a>
+      <a href="/materials" class="sidebar-link <%= active === 'materials' ? 'active' : '' %>"><span class="icon">📚</span> <%= lang === 'bn' ? 'স্টাডি ম্যাটেরিয়াল' : 'Study Materials' %></a>
+      <a href="/courses" class="sidebar-link <%= active === 'courses' ? 'active' : '' %>"><span class="icon">🎓</span> <%= lang === 'bn' ? 'কোর্সসমূহ' : 'Courses' %></a>
+      <div class="sidebar-section"><%= lang === 'bn' ? 'অ্যাকাউন্ট' : 'Account' %></div>
+      <a href="/student/profile" class="sidebar-link <%= active === 'profile' ? 'active' : '' %>"><span class="icon">👤</span> <%= lang === 'bn' ? 'প্রোফাইল' : 'Profile' %></a>
+      <a href="/" class="sidebar-link"><span class="icon">🌐</span> <%= lang === 'bn' ? 'হোমপেজ' : 'Homepage' %></a>
+    </nav>
+  <% } %>
+</aside>

@@ -1,0 +1,54 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active: 'history', role: 'student'}) %>
+  <div class="main-content">
+    <div class="page-header">
+      <div class="page-title">📊 <%= lang==='bn'?'পরীক্ষার ইতিহাস':'Exam History' %></div>
+      <a href="/exam/setup" class="btn btn-primary btn-sm">+ <%= lang==='bn'?'নতুন পরীক্ষা':'New Exam' %></a>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>#</th>
+          <th><%= lang==='bn'?'বিষয়':'Subject' %></th>
+          <th><%= lang==='bn'?'স্তর':'Level' %></th>
+          <th><%= lang==='bn'?'স্কোর':'Score' %></th>
+          <th><%= lang==='bn'?'শতাংশ':'Percent' %></th>
+          <th><%= lang==='bn'?'তারিখ':'Date' %></th>
+          <th><%= lang==='bn'?'কার্যক্রম':'Action' %></th>
+        </tr></thead>
+        <tbody>
+          <% if(exams.length) { %>
+            <% exams.forEach((e,i) => { %>
+            <% const pct = e.score!==null&&e.total_questions ? Math.round(e.score/e.total_questions*100) : null; %>
+            <tr>
+              <td><%= i+1 %></td>
+              <td><%= e.subject || (e.stream+' '+e.level.toUpperCase()) %></td>
+              <td><span class="badge badge-primary"><%= e.level.toUpperCase() %></span></td>
+              <td><%= e.score!==null ? e.score+'/'+e.total_questions : '—' %></td>
+              <td>
+                <% if(pct!==null) { %>
+                <span class="badge <%= pct>=80?'badge-success':pct>=60?'badge-warning':'badge-danger' %>"><%= pct %>%</span>
+                <% } else { %><span class="badge badge-secondary"><%= lang==='bn'?'চলমান':'Ongoing' %></span><% } %>
+              </td>
+              <td><%= new Date(e.created_at).toLocaleDateString('en-BD') %></td>
+              <td>
+                <% if(e.completed_at) { %>
+                <a href="/exam/<%= e.id %>/result" class="btn btn-primary btn-sm"><%= lang==='bn'?'দেখুন':'View' %></a>
+                <% } else { %>
+                <a href="/exam/<%= e.id %>" class="btn btn-secondary btn-sm"><%= lang==='bn'?'চালিয়ে যান':'Continue' %></a>
+                <% } %>
+              </td>
+            </tr>
+            <% }) %>
+          <% } else { %>
+          <tr><td colspan="7" style="text-align:center;padding:3rem;color:var(--text3);">
+            <%= lang==='bn'?'কোনো পরীক্ষা নেই':'No exams yet' %> — <a href="/exam/setup" style="color:var(--primary);font-weight:600;"><%= lang==='bn'?'এখনই শুরু করুন':'Start now' %></a>
+          </td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

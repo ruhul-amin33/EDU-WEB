@@ -1,0 +1,79 @@
+<%- include('../partials/layout') %>
+<div style="padding-top:70px;min-height:100vh;background:var(--bg);">
+<div class="container" style="padding:2rem 1rem;max-width:850px;">
+
+  <!-- Exam Header -->
+  <div class="exam-header">
+    <div>
+      <div style="font-weight:800;font-size:1rem;color:var(--text);">
+        <% if (exam.title) { %>
+          <%= exam.title %>
+        <% } else { %>
+          <%= exam.level.toUpperCase() %> <%= exam.stream %> <%= exam.subject ? '• '+exam.subject : '' %>
+        <% } %>
+      </div>
+      <div style="font-size:0.8rem;color:var(--text3);margin-top:0.2rem;">
+        <%= questions.length %> <%= lang === 'bn' ? 'প্রশ্ন' : 'Questions' %> • <span id="currentNum">1 / <%= questions.length %></span>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:0.75rem;color:var(--text3);text-align:center;margin-bottom:0.2rem;"><%= lang === 'bn' ? 'বাকি সময়' : 'Time Left' %></div>
+      <div class="exam-timer" id="examTimer"><%= String(Math.floor(exam.time_limit/60)).padStart(2,'0') %>:<%= String(exam.time_limit%60).padStart(2,'0') %></div>
+    </div>
+  </div>
+
+  <!-- Question Number Map -->
+  <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:1.5rem;">
+    <% questions.forEach((q, i) => { %>
+    <button class="q-nav-btn" data-index="<%= i %>" onclick="ExamUI.go(<%= i %>)"
+      style="width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--card-bg);color:var(--text2);font-size:0.8rem;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:var(--font-main);">
+      <%= i+1 %>
+    </button>
+    <% }) %>
+  </div>
+
+  <form id="examForm" action="/exam/<%= exam.id %>/submit" method="POST">
+    <!-- Questions -->
+    <% questions.forEach((q, i) => { %>
+    <div class="question-card" id="q-<%= i %>">
+      <div class="question-num"><%= lang === 'bn' ? 'প্রশ্ন' : 'Question' %> <%= i+1 %></div>
+      <div class="question-text"><%= q.question_text %></div>
+      <div class="options">
+        <% ['a','b','c','d'].forEach(opt => { %>
+        <label class="option-label" onclick="ExamUI.markAnswered(<%= i %>)">
+          <input type="radio" name="answers[<%= q.question_id %>]" value="<%= opt %>">
+          <span class="option-key"><%= opt.toUpperCase() %></span>
+          <span class="option-text"><%= q['option_'+opt] %></span>
+        </label>
+        <% }) %>
+      </div>
+    </div>
+    <% }) %>
+
+    <!-- Navigation -->
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+      <button type="button" id="prevBtn" onclick="ExamUI.go(ExamUI.current-1)" class="btn btn-secondary">← <%= lang === 'bn' ? 'আগের' : 'Previous' %></button>
+      <button type="button" id="nextBtn" onclick="ExamUI.go(ExamUI.current+1)" class="btn btn-secondary"><%= lang === 'bn' ? 'পরের' : 'Next' %> →</button>
+      <button type="submit" class="btn btn-primary" onclick="return confirm('<%= lang === 'bn' ? 'পরীক্ষা শেষ করতে চান?' : 'Submit exam now?' %>')">
+        ✅ <%= lang === 'bn' ? 'জমা দিন' : 'Submit Exam' %>
+      </button>
+    </div>
+  </form>
+</div>
+</div>
+
+<style>
+.q-nav-btn.active { background:var(--primary)!important;color:white!important;border-color:var(--primary)!important; }
+.q-nav-btn.answered { background:var(--bg3)!important;border-color:var(--success)!important;color:var(--success)!important; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  ExamUI.init(<%= questions.length %>);
+  const timer = new ExamTimer(<%= exam.time_limit * 60 %>, () => {
+    document.getElementById('examForm').submit();
+  });
+  timer.start();
+});
+</script>
+<%- include('../partials/footer') %>

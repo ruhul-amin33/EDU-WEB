@@ -1,0 +1,10 @@
+<%- include('partials/layout') %>
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:6rem 1rem;background:var(--bg);">
+  <div style="text-align:center;max-width:400px;">
+    <div style="font-size:5rem;margin-bottom:1rem;">😔</div>
+    <h2 style="font-size:1.8rem;font-weight:900;color:var(--text);margin-bottom:0.75rem;"><%= title||'Error' %></h2>
+    <p style="color:var(--text2);margin-bottom:2rem;"><%= message||'Something went wrong.' %></p>
+    <a href="/" class="btn btn-primary"><%= lang==='bn'?'হোমপেজে ফিরুন':'Back to Home' %></a>
+  </div>
+</div>
+<%- include('partials/footer') %>

@@ -1,0 +1,141 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active: 'add-q', role: 'teacher'}) %>
+  <div class="main-content">
+    <div class="page-header">
+      <div>
+        <div class="page-title">➕ <%= lang==='bn'?'প্রশ্ন যোগ করুন':'Add Question' %></div>
+        <div class="page-subtitle"><%= lang==='bn'?'প্রশ্ন যোগ করুন — অ্যাডমিন অনুমোদনের পর প্রকাশিত হবে':'Questions go live after admin approval' %></div>
+      </div>
+      <a href="/teacher/questions/bulk-add" class="btn btn-secondary">📥 <%= lang==='bn'?'একসাথে অনেক প্রশ্ন যোগ করুন':'Bulk Add Multiple Questions' %></a>
+    </div>
+    <div style="max-width:800px;">
+      <div class="table-wrap" style="padding:2rem;">
+        <form action="/teacher/questions/add" method="POST">
+          <div class="form-group">
+            <label class="form-label"><%= lang==='bn'?'প্রশ্ন (ইংরেজি)':'Question Text (English)' %> *</label>
+            <textarea name="question_text" id="questionTextInput" class="form-control" rows="3" required placeholder="Type the question here..."></textarea>
+            <div id="dupWarning" style="display:none;margin-top:.6rem;padding:.75rem 1rem;border-radius:8px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:var(--warning);font-size:.85rem;line-height:1.6;"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><%= lang==='bn'?'প্রশ্ন (বাংলা, ঐচ্ছিক)':'Question Text (Bangla, optional)' %></label>
+            <textarea name="question_text_bn" class="form-control" rows="3" placeholder="বাংলায় প্রশ্ন লিখুন..."></textarea>
+          </div>
+
+          <div class="divider"></div>
+          <div style="font-weight:700;font-size:0.9rem;margin-bottom:1rem;color:var(--text);">📝 <%= lang==='bn'?'উত্তরের অপশন':'Answer Options' %></div>
+
+          <% ['A','B','C','D'].forEach(opt => { %>
+          <div class="form-group">
+            <label class="form-label"><%= lang==='bn'?'অপশন':'Option' %> <%= opt %></label>
+            <input type="text" name="option_<%= opt.toLowerCase() %>" class="form-control" required placeholder="Option <%= opt %>...">
+          </div>
+          <% }) %>
+
+          <div class="form-group">
+            <label class="form-label"><%= lang==='bn'?'সঠিক উত্তর':'Correct Answer' %> *</label>
+            <select name="correct_answer" class="form-control" required>
+              <option value="a">A</option>
+              <option value="b">B</option>
+              <option value="c">C</option>
+              <option value="d">D</option>
+            </select>
+          </div>
+
+          <div class="divider"></div>
+          <div style="font-weight:700;font-size:0.9rem;margin-bottom:1rem;color:var(--text);">🏷️ <%= lang==='bn'?'বিভাগ ও তথ্য':'Category & Info' %></div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label"><%= lang==='bn'?'পরীক্ষার স্তর':'Level' %> *</label>
+              <select name="level" class="form-control" required>
+                <option value="ssc">SSC</option>
+                <option value="hsc">HSC</option>
+                <option value="admission">Admission</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label"><%= lang==='bn'?'বিভাগ':'Stream' %></label>
+              <select name="stream" class="form-control">
+                <option value="all"><%= lang==='bn'?'সব':'All' %></option>
+                <option value="science"><%= lang==='bn'?'বিজ্ঞান':'Science' %></option>
+                <option value="arts"><%= lang==='bn'?'মানবিক':'Arts' %></option>
+                <option value="commerce"><%= lang==='bn'?'বাণিজ্য':'Commerce' %></option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label"><%= lang==='bn'?'কঠিনতা':'Difficulty' %></label>
+              <select name="difficulty" class="form-control">
+                <option value="easy"><%= lang==='bn'?'সহজ':'Easy' %></option>
+                <option value="medium" selected><%= lang==='bn'?'মধ্যম':'Medium' %></option>
+                <option value="hard"><%= lang==='bn'?'কঠিন':'Hard' %></option>
+              </select>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label"><%= lang==='bn'?'বিষয়':'Subject' %> *</label>
+              <input type="text" name="subject" class="form-control" required placeholder="e.g. Physics, Mathematics">
+            </div>
+            <div class="form-group">
+              <label class="form-label"><%= lang==='bn'?'অধ্যায়':'Chapter' %></label>
+              <input type="text" name="chapter" class="form-control" placeholder="e.g. Chapter 3 - Motion">
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label"><%= lang==='bn'?'সাল':'Year' %></label>
+              <input type="text" name="exam_year" class="form-control" placeholder="e.g. 2023">
+            </div>
+            <div class="form-group">
+              <label class="form-label"><%= lang==='bn'?'বোর্ড/বিশ্ববিদ্যালয়':'Board/University' %></label>
+              <input type="text" name="board" class="form-control" placeholder="e.g. Dhaka Board, DU">
+            </div>
+          </div>
+
+          <div class="divider"></div>
+          <div class="form-group">
+            <label class="form-label">💡 <%= lang==='bn'?'ব্যাখ্যা (ইংরেজি)':'Explanation (English)' %></label>
+            <textarea name="explanation" class="form-control" rows="3" placeholder="Explain why this answer is correct..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">💡 <%= lang==='bn'?'ব্যাখ্যা (বাংলা)':'Explanation (Bangla)' %></label>
+            <textarea name="explanation_bn" class="form-control" rows="3" placeholder="বাংলায় ব্যাখ্যা লিখুন..."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg">
+            📤 <%= lang==='bn'?'প্রশ্ন জমা দিন (অনুমোদনের জন্য)':'Submit Question for Approval' %>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let dupTimer;
+document.getElementById('questionTextInput').addEventListener('input', function (e) {
+  clearTimeout(dupTimer);
+  const val = e.target.value;
+  dupTimer = setTimeout(() => checkDuplicateQuestion(val), 600);
+});
+
+async function checkDuplicateQuestion(text) {
+  const box = document.getElementById('dupWarning');
+  if (text.trim().length < 15) { box.style.display = 'none'; return; }
+  try {
+    const res = await fetch('/teacher/questions/check-duplicate?text=' + encodeURIComponent(text));
+    const data = await res.json();
+    if (data.matches && data.matches.length) {
+      box.innerHTML = '⚠️ <strong><%= lang==="bn"?"একই রকম প্রশ্ন আগে থেকেই আছে":"Possible duplicate — similar question(s) already exist" %>:</strong><br>' +
+        data.matches.map(m => '• ' + m.question_text.slice(0, 100) + (m.question_text.length > 100 ? '...' : '') + ' <span style="opacity:.65;">(' + m.status + ')</span>').join('<br>');
+      box.style.display = 'block';
+    } else {
+      box.style.display = 'none';
+    }
+  } catch (e) { /* silent fail — duplicate check is a non-blocking helper */ }
+}
+</script>
+
+<%- include('../partials/footer') %>

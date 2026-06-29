@@ -1,0 +1,113 @@
+<%- include('../partials/layout') %>
+<div class="auth-page">
+  <div class="auth-card animate-fadeIn" style="max-width:520px;">
+    <div class="auth-header">
+      <div style="font-size:2.5rem;margin-bottom:0.5rem;">🎓</div>
+      <h2><%= lang === 'bn' ? 'আপনার প্রোফাইল সেটআপ করুন' : 'Setup Your Profile' %></h2>
+      <p><%= lang === 'bn' ? 'আপনার পরীক্ষার স্তর ও বিভাগ নির্বাচন করুন' : 'Select your exam level and stream' %></p>
+    </div>
+    <form action="/student/setup" method="POST">
+      <div class="form-group">
+        <label class="form-label"><%= lang === 'bn' ? 'পরীক্ষার স্তর' : 'Exam Level' %></label>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin-top:0.5rem;">
+          <label class="level-option" onclick="toggleSessionField('ssc')">
+            <input type="radio" name="level" value="ssc" required style="accent-color:var(--primary);" onchange="toggleSessionField('ssc')">
+            <span style="font-size:1.4rem;">📚</span>
+            <span style="font-weight:600;font-size:.92rem;">SSC</span>
+          </label>
+          <label class="level-option" onclick="toggleSessionField('hsc')">
+            <input type="radio" name="level" value="hsc" style="accent-color:var(--primary);" onchange="toggleSessionField('hsc')">
+            <span style="font-size:1.4rem;">📖</span>
+            <span style="font-weight:600;font-size:.92rem;">HSC</span>
+          </label>
+          <label class="level-option" onclick="toggleSessionField('admission')">
+            <input type="radio" name="level" value="admission" style="accent-color:var(--primary);" onchange="toggleSessionField('admission')">
+            <span style="font-size:1.4rem;">🏛️</span>
+            <span style="font-weight:600;font-size:.92rem;"><%= lang === 'bn' ? 'ভর্তি' : 'Admission' %></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Batch Year — shown for every level, label/suggestions change based on selection.
+           Uses a text input + datalist so the suggested years are pickable in one click,
+           but the person can also type any custom year/session they want. -->
+      <div class="form-group" id="sessionFieldWrap" style="display:none;">
+        <label class="form-label" id="sessionFieldLabel">📅 <%= lang === 'bn' ? 'আপনার সাল' : 'Your Year' %></label>
+        <input type="text" name="hsc_session" class="form-control" id="sessionSelect" list="sessionYearList" placeholder="<%= lang === 'bn' ? 'যেমন 2026, অথবা নিজের লিখুন' : 'e.g. 2026, or type your own' %>">
+        <datalist id="sessionYearList"></datalist>
+        <div class="form-hint" id="sessionFieldHint"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label"><%= lang === 'bn' ? 'বিভাগ' : 'Stream' %></label>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem;margin-top:0.5rem;">
+          <label style="display:flex;flex-direction:column;align-items:center;gap:0.5rem;padding:1rem 0.5rem;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all 0.2s;text-align:center;">
+            <input type="radio" name="stream" value="science" required style="accent-color:var(--primary);">
+            <span style="font-size:1.5rem;">🔬</span>
+            <span style="font-size:0.82rem;font-weight:600;"><%= lang === 'bn' ? 'বিজ্ঞান' : 'Science' %></span>
+          </label>
+          <label style="display:flex;flex-direction:column;align-items:center;gap:0.5rem;padding:1rem 0.5rem;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all 0.2s;text-align:center;">
+            <input type="radio" name="stream" value="arts" style="accent-color:var(--primary);">
+            <span style="font-size:1.5rem;">📜</span>
+            <span style="font-size:0.82rem;font-weight:600;"><%= lang === 'bn' ? 'মানবিক' : 'Arts' %></span>
+          </label>
+          <label style="display:flex;flex-direction:column;align-items:center;gap:0.5rem;padding:1rem 0.5rem;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all 0.2s;text-align:center;">
+            <input type="radio" name="stream" value="commerce" style="accent-color:var(--primary);">
+            <span style="font-size:1.5rem;">💼</span>
+            <span style="font-size:0.82rem;font-weight:600;"><%= lang === 'bn' ? 'বাণিজ্য' : 'Commerce' %></span>
+          </label>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg">
+        <%= lang === 'bn' ? 'শুরু করুন!' : 'Let\'s Go!' %> 🚀
+      </button>
+    </form>
+  </div>
+</div>
+
+<style>
+.level-option {
+  display: flex; flex-direction: column; align-items: center; gap: .4rem;
+  padding: 1rem .5rem; border: 2px solid var(--border); border-radius: 10px;
+  cursor: pointer; transition: all .2s; text-align: center;
+}
+.level-option:has(input:checked) { border-color: var(--primary); background: rgba(91,108,249,.06); }
+</style>
+
+<script>
+const sessionConfig = {
+  ssc: {
+    label: '📅 ' + (<%- JSON.stringify(lang === 'bn' ? 'আপনার SSC সাল' : 'Your SSC Year') %>),
+    hint: <%- JSON.stringify(lang === 'bn' ? 'আপনি কোন সালে SSC পরীক্ষা দিচ্ছেন/দিয়েছেন তা জানালে সঠিক কোর্স দেখাতে সহজ হবে।' : 'Letting us know your SSC exam year helps us show the right courses for you.') %>,
+    years: ['2025','2026','2027','2028']
+  },
+  hsc: {
+    label: '📅 ' + (<%- JSON.stringify(lang === 'bn' ? 'আপনার HSC সাল' : 'Your HSC Year') %>),
+    hint: <%- JSON.stringify(lang === 'bn' ? 'আপনি কোন সালে HSC পরীক্ষা দিচ্ছেন/দিয়েছেন তা জানালে সঠিক কোর্স দেখাতে সহজ হবে।' : 'Letting us know your HSC exam year helps us show the right courses for you.') %>,
+    years: ['2024','2025','2026','2027','2028']
+  },
+  admission: {
+    label: '📅 ' + (<%- JSON.stringify(lang === 'bn' ? 'আপনার HSC সেশন' : 'Your HSC Session') %>),
+    hint: <%- JSON.stringify(lang === 'bn' ? 'আপনি কোন বছরের HSC পরীক্ষার্থী তা জানালে ভর্তি প্রস্তুতির সঠিক কোর্স দেখাতে সহজ হবে।' : 'Letting us know your HSC batch year helps us show the right admission courses for you.') %>,
+    years: ['2024','2025','2026','2027','2028']
+  }
+};
+
+function toggleSessionField(level) {
+  const wrap = document.getElementById('sessionFieldWrap');
+  const label = document.getElementById('sessionFieldLabel');
+  const hint = document.getElementById('sessionFieldHint');
+  const input = document.getElementById('sessionSelect');
+  const datalist = document.getElementById('sessionYearList');
+  const cfg = sessionConfig[level];
+  if (!cfg) { wrap.style.display = 'none'; input.removeAttribute('required'); return; }
+
+  label.textContent = cfg.label;
+  hint.textContent = cfg.hint;
+  datalist.innerHTML = cfg.years.map(y => `<option value="${y}"></option>`).join('');
+  wrap.style.display = 'block';
+  input.setAttribute('required', 'required');
+}
+</script>
+
+<%- include('../partials/footer') %>

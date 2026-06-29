@@ -1,0 +1,70 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active: 'exam', role: 'student'}) %>
+  <div class="main-content">
+    <div class="page-header">
+      <div class="page-title">📝 <%= lang === 'bn' ? 'পরীক্ষা সেটআপ' : 'Exam Setup' %></div>
+      <div class="page-subtitle"><%= lang === 'bn' ? 'আপনার পরীক্ষার ধরন ও সময় নির্বাচন করুন' : 'Configure your exam preferences' %></div>
+    </div>
+
+    <div class="alert alert-info" style="max-width:600px;">
+      <%= lang === 'bn' ? 'শিক্ষক বা অ্যাডমিনের তৈরি পরীক্ষা দিতে চান?' : 'Want to take an exam set by your teacher or admin?' %>
+      <a href="/exam/templates" style="font-weight:700;color:var(--primary);">→ <%= lang === 'bn' ? 'এখানে দেখুন' : 'Browse here' %></a>
+    </div>
+
+    <div style="max-width:600px;">
+      <div class="table-wrap" style="padding:2rem;">
+        <form action="/exam/start" method="POST">
+          <input type="hidden" name="exam_type" value="student_custom">
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label"><%= lang === 'bn' ? 'পরীক্ষার স্তর' : 'Exam Level' %></label>
+              <select name="level" class="form-control" required>
+                <option value="ssc" <%= user && user.level === 'ssc' ? 'selected' : '' %>>SSC</option>
+                <option value="hsc" <%= user && user.level === 'hsc' ? 'selected' : '' %>>HSC</option>
+                <option value="admission" <%= user && user.level === 'admission' ? 'selected' : '' %>><%= lang==='bn'?'ভর্তি':'Admission' %></option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label"><%= lang === 'bn' ? 'বিভাগ' : 'Stream' %></label>
+              <select name="stream" class="form-control">
+                <option value="all"><%= lang === 'bn' ? 'সকল বিভাগ' : 'All Streams' %></option>
+                <option value="science" <%= user && user.stream === 'science' ? 'selected' : '' %>><%= lang === 'bn' ? 'বিজ্ঞান' : 'Science' %></option>
+                <option value="arts" <%= user && user.stream === 'arts' ? 'selected' : '' %>><%= lang === 'bn' ? 'মানবিক' : 'Arts' %></option>
+                <option value="commerce" <%= user && user.stream === 'commerce' ? 'selected' : '' %>><%= lang === 'bn' ? 'বাণিজ্য' : 'Commerce' %></option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"><%= lang === 'bn' ? 'বিষয় (ঐচ্ছিক)' : 'Subject (Optional)' %></label>
+            <select name="subject" class="form-control">
+              <option value=""><%= lang === 'bn' ? 'সব বিষয়' : 'All Subjects' %></option>
+              <% subjects.forEach(s => { %><option value="<%= s.subject %>"><%= s.subject %></option><% }) %>
+            </select>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label"><%= lang === 'bn' ? 'প্রশ্ন সংখ্যা' : 'Number of Questions' %></label>
+              <input type="number" name="question_count" class="form-control" min="1" max="200" value="20" required>
+              <div class="form-hint"><%= lang === 'bn' ? 'যেকোনো সংখ্যা দিন (১-২০০)' : 'Enter any number (1-200)' %></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label"><%= lang === 'bn' ? 'সময়সীমা (মিনিট)' : 'Time Limit (Minutes)' %></label>
+              <input type="number" name="time_limit" class="form-control" min="1" max="600" value="30" required>
+              <div class="form-hint"><%= lang === 'bn' ? 'যেকোনো সময় দিন (১-৬০০ মিনিট)' : 'Enter any duration (1-600 minutes)' %></div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+          <button type="submit" class="btn btn-primary btn-block btn-lg">
+            🚀 <%= lang === 'bn' ? 'পরীক্ষা শুরু করুন' : 'Start Exam' %>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

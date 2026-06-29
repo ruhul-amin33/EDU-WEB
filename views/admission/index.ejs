@@ -1,0 +1,100 @@
+<%- include('../partials/layout') %>
+<div style="padding-top:var(--nav-h);min-height:100vh;background:var(--bg);">
+<div class="container" style="padding:3rem 1rem;">
+
+  <div class="section-header">
+    <span class="section-eyebrow"><%=lang==='bn'?'ভর্তি প্রস্তুতি':'Admission'%></span>
+    <h2 class="section-title"><%=lang==='bn'?'ভর্তি পরীক্ষার প্রস্তুতি কোর্স':'Admission Preparation Courses'%></h2>
+    <p class="section-subtitle"><%=lang==='bn'?'আপনার HSC সেশন ও শিক্ষা বোর্ড নির্বাচন করে সঠিক কোর্স খুঁজে নিন':'Select your HSC session and education board to find the right course'%></p>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-bar" style="margin-bottom:2rem;background:var(--bg2);padding:1.25rem 1.5rem;border-radius:var(--radius-lg);border:1px solid var(--border);">
+    <form method="GET" style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end;width:100%;">
+      <div class="form-group" style="margin:0;min-width:150px;">
+        <label class="form-label">📅 <%=lang==='bn'?'HSC সেশন':'HSC Session'%></label>
+        <select name="session" class="form-control">
+          <option value=""><%=lang==='bn'?'সব সেশন':'All Sessions'%></option>
+          <% ['2025','2026','2027','2028'].forEach(function(yr){ %>
+          <option value="<%=yr%>" <%=filters.session===yr?'selected':''%>>HSC <%=yr%></option>
+          <% }) %>
+          <% sessions.forEach(function(s){ %>
+            <% if (!['2025','2026','2027','2028'].includes(s)) { %>
+            <option value="<%=s%>" <%=filters.session===s?'selected':''%>>HSC <%=s%></option>
+            <% } %>
+          <% }) %>
+        </select>
+      </div>
+      <div class="form-group" style="margin:0;min-width:170px;">
+        <label class="form-label">🏛️ <%=lang==='bn'?'শিক্ষা বোর্ড':'Education Board'%></label>
+        <select name="board" class="form-control">
+          <option value=""><%=lang==='bn'?'সব বোর্ড':'All Boards'%></option>
+          <% boards.forEach(function(b){ %>
+          <option value="<%=b%>" <%=filters.board===b?'selected':''%>><%=b%></option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="form-group" style="margin:0;min-width:110px;">
+        <label class="form-label"><%=lang==='bn'?'বিভাগ':'Stream'%></label>
+        <select name="stream" class="form-control">
+          <option value=""><%=lang==='bn'?'সব':'All'%></option>
+          <option value="science" <%=filters.stream==='science'?'selected':''%>><%=lang==='bn'?'বিজ্ঞান':'Science'%></option>
+          <option value="arts" <%=filters.stream==='arts'?'selected':''%>><%=lang==='bn'?'মানবিক':'Arts'%></option>
+          <option value="commerce" <%=filters.stream==='commerce'?'selected':''%>><%=lang==='bn'?'বাণিজ্য':'Commerce'%></option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary"><%=lang==='bn'?'খুঁজুন':'Search'%></button>
+      <a href="/admission" class="btn btn-secondary"><%=lang==='bn'?'রিসেট':'Reset'%></a>
+    </form>
+  </div>
+
+  <% if (courses.length) { %>
+  <div class="courses-grid">
+    <% courses.forEach(function(c){ %>
+    <div class="course-card">
+      <div class="course-thumb">
+        <% if(c.thumbnail){%><img src="<%= c.thumbnail.startsWith('http') ? c.thumbnail : '/uploads/' + c.thumbnail %>" alt="<%=c.title%>"><%}else{%><span>🎓</span><%}%>
+        <div class="course-level-badge"><%=c.level.toUpperCase()%></div>
+      </div>
+      <div class="course-body">
+        <div>
+          <div class="course-title"><%=lang==='bn'&&c.title_bn?c.title_bn:c.title%> <span class="course-verified">✅</span></div>
+          <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.5rem;">
+            <% if(c.session){%><span class="badge badge-primary">HSC <%=c.session%></span><%}%>
+            <% if(c.board){%><span class="badge badge-secondary"><%=c.board%> Board</span><%}%>
+          </div>
+          <div class="course-rating" style="margin-bottom:.5rem;">
+            <span class="stars">★★★★☆</span>
+            <span class="rating-count">(<%=c.enrolled_count%> <%=lang==='bn'?'শিক্ষার্থী':'enrolled'%>)</span>
+          </div>
+          <ul class="course-features">
+            <%var desc=(lang==='bn'&&c.description_bn?c.description_bn:c.description)||'';var lines=desc.split('\n').filter(function(l){return l.trim();}).slice(0,3);%>
+            <%if(lines.length){lines.forEach(function(l){%><li><%=l.trim()%></li><%});}else{%>
+            <li><%=lang==='bn'?'সম্পূর্ণ ভর্তি সিলেবাস কভার':'Full admission syllabus coverage'%></li>
+            <li><%=lang==='bn'?'বিশেষজ্ঞ শিক্ষক পরিচালিত':'Expert teacher-led'%></li>
+            <%}%>
+          </ul>
+        </div>
+        <div class="course-footer">
+          <div>
+            <div class="course-price"><%=c.price==0?(lang==='bn'?'বিনামূল্যে':'Free'):'৳'+c.price%></div>
+            <%if(c.original_price>c.price){%><div class="course-price-orig">৳<%=c.original_price%></div><%}%>
+          </div>
+          <div class="course-actions">
+            <a href="/courses/<%=c.id%>" class="btn-course-view">ℹ <%=lang==='bn'?'বিস্তারিত':'View Course'%></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+  <% } else { %>
+  <div style="text-align:center;padding:4rem;color:var(--text3);">
+    <div style="font-size:2.5rem;margin-bottom:.7rem;">🎓</div>
+    <p><%=lang==='bn'?'এই ফিল্টারে কোনো কোর্স পাওয়া যায়নি।':'No courses found for these filters.'%></p>
+  </div>
+  <% } %>
+
+</div>
+</div>
+<%- include('../partials/footer') %>

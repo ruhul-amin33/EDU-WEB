@@ -1,0 +1,113 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active: 'history', role: 'student'}) %>
+  <div class="main-content">
+
+    <%
+      var pct = Math.round(exam.score / exam.total_questions * 100);
+      var bannerColor = pct >= 80 ? 'var(--success)' : pct >= 60 ? 'var(--warning)' : 'var(--danger)';
+      var bannerDark  = pct >= 80 ? '#15803d'        : pct >= 60 ? '#b45309'        : '#b91c1c';
+      var emoji       = pct >= 80 ? '🏆'              : pct >= 60 ? '👍'             : '💪';
+      var gradeMsg    = pct >= 80
+        ? (lang==='bn' ? 'অসাধারণ! তুমি দারুণ করেছ!' : 'Excellent! You did great!')
+        : pct >= 60
+          ? (lang==='bn' ? 'ভালো হয়েছে! আরও অনুশীলন করো।' : 'Good job! Keep practicing.')
+          : (lang==='bn' ? 'চেষ্টা করতে থাকো! তুমি পারবে!' : 'Keep trying! You can do it!');
+      var grade = pct>=80?'A+':pct>=70?'A':pct>=60?'B':pct>=50?'C':'F';
+    %>
+
+    <!-- Score Banner -->
+    <div style="background:linear-gradient(135deg,<%= bannerColor %>,<%= bannerDark %>);border-radius:var(--radius-lg);padding:2.5rem;text-align:center;margin-bottom:2rem;color:white;">
+      <div style="font-size:4rem;margin-bottom:0.5rem;"><%= emoji %></div>
+      <div style="font-size:3rem;font-weight:900;"><%= exam.score %>/<%= exam.total_questions %></div>
+      <div style="font-size:1.5rem;font-weight:700;opacity:0.9;"><%= pct %>%</div>
+      <div style="font-size:1rem;opacity:0.8;margin-top:0.5rem;"><%= gradeMsg %></div>
+    </div>
+
+    <div class="stat-cards" style="margin-bottom:2rem;">
+      <div class="stat-card"><div class="stat-card-icon">✅</div><div class="stat-card-val" style="color:var(--success)"><%= exam.score %></div><div class="stat-card-label"><%= lang==='bn'?'সঠিক':'Correct' %></div></div>
+      <div class="stat-card"><div class="stat-card-icon">❌</div><div class="stat-card-val" style="color:var(--danger)"><%= exam.total_questions - exam.score %></div><div class="stat-card-label"><%= lang==='bn'?'ভুল':'Wrong' %></div></div>
+      <div class="stat-card"><div class="stat-card-icon">📊</div><div class="stat-card-val"><%= pct %>%</div><div class="stat-card-label"><%= lang==='bn'?'স্কোর':'Score' %></div></div>
+      <div class="stat-card"><div class="stat-card-icon">🏅</div><div class="stat-card-val"><%= grade %></div><div class="stat-card-label"><%= lang==='bn'?'গ্রেড':'Grade' %></div></div>
+    </div>
+
+    <div style="display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap;">
+      <a href="/exam/setup" class="btn btn-primary">📝 <%= lang==='bn'?'আবার পরীক্ষা দিন':'Take Another Exam' %></a>
+      <a href="/exam/history/all" class="btn btn-secondary">📋 <%= lang==='bn'?'ইতিহাস':'History' %></a>
+    </div>
+
+    <h3 style="font-weight:800;font-size:1.1rem;margin-bottom:1.25rem;">🔍 <%= lang==='bn'?'প্রশ্ন পর্যালোচনা':'Question Review' %></h3>
+
+    <% answers.forEach(function(a, i) { %>
+    <div class="question-card" style="margin-bottom:1.25rem;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.5rem;">
+        <div class="question-num"><%= lang==='bn'?'প্রশ্ন':'Question' %> <%= i+1 %> • <%= a.subject %><%= a.exam_year ? ' • '+a.exam_year : '' %><%= a.board ? ' • '+a.board : '' %></div>
+        <span class="badge <%= a.is_correct ? 'badge-success' : 'badge-danger' %>">
+          <%= a.is_correct ? '✅ '+(lang==='bn'?'সঠিক':'Correct') : '❌ '+(lang==='bn'?'ভুল':'Wrong') %>
+        </span>
+      </div>
+      <div class="question-text" style="font-size:0.95rem;"><%= a.question_text %></div>
+
+      <div class="options" style="margin-top:1rem;">
+        <% ['a','b','c','d'].forEach(function(opt) { %>
+        <%
+          var isCorrect = a.correct_answer === opt;
+          var isWrong   = a.selected_answer === opt && !a.is_correct;
+          var optClass  = isCorrect ? 'option-correct' : isWrong ? 'option-wrong' : '';
+          var keyStyle  = isCorrect ? 'background:var(--success);color:white;' : isWrong ? 'background:var(--danger);color:white;' : '';
+        %>
+        <div class="option-label <%= optClass %>" style="cursor:default;">
+          <span class="option-key" style="<%= keyStyle %>"><%= opt.toUpperCase() %></span>
+          <span class="option-text"><%= a['option_'+opt] %></span>
+          <% if(isCorrect) { %><span style="margin-left:auto;font-size:0.75rem;color:var(--success);font-weight:700;">✓ <%= lang==='bn'?'সঠিক':'Correct' %></span><% } %>
+        </div>
+        <% }) %>
+      </div>
+
+      <% if(a.explanation) { %>
+      <div class="explain-box">
+        <strong>💡 <%= lang==='bn'?'ব্যাখ্যা':'Explanation' %>:</strong><br>
+        <%= lang==='bn' && a.explanation_bn ? a.explanation_bn : a.explanation %>
+      </div>
+      <% } %>
+
+      <div style="margin-top:1rem;padding-top:0.75rem;border-top:1px solid var(--border);">
+        <button onclick="reportQuestion(<%= a.question_id %>, <%= exam.id %>)" class="btn btn-secondary btn-sm">
+          ⚠️ <%= lang==='bn'?'ভুল রিপোর্ট করুন':'Report Error' %>
+        </button>
+      </div>
+    </div>
+    <% }) %>
+
+  </div>
+</div>
+
+<!-- Report Modal -->
+<div class="modal-overlay" id="reportModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">⚠️ <%= lang==='bn'?'প্রশ্ন রিপোর্ট করুন':'Report Question' %></span>
+      <button class="modal-close" onclick="closeModal('reportModal')">✕</button>
+    </div>
+    <form action="/exam/report" method="POST">
+      <input type="hidden" name="question_id" id="reportQuestionId">
+      <input type="hidden" name="exam_id" id="reportExamId">
+      <div class="form-group">
+        <label class="form-label"><%= lang==='bn'?'সমস্যার ধরন':'Problem Type' %></label>
+        <select name="report_type" class="form-control" required>
+          <option value="wrong_answer"><%= lang==='bn'?'ভুল উত্তর':'Wrong Answer' %></option>
+          <option value="typo"><%= lang==='bn'?'বানান ভুল':'Typo/Spelling' %></option>
+          <option value="unclear"><%= lang==='bn'?'অস্পষ্ট প্রশ্ন':'Unclear Question' %></option>
+          <option value="other"><%= lang==='bn'?'অন্যান্য':'Other' %></option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label"><%= lang==='bn'?'বিস্তারিত':'Details' %></label>
+        <textarea name="comment" class="form-control" rows="3" required placeholder="<%= lang==='bn'?'কোথায় ভুল আছে বলুন...':'Describe the issue...' %>"></textarea>
+      </div>
+      <button type="submit" class="btn btn-danger btn-block"><%= lang==='bn'?'রিপোর্ট পাঠান':'Send Report' %></button>
+    </form>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

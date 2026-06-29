@@ -1,0 +1,33 @@
+<%- include('../partials/layout') %>
+<div class="auth-page">
+  <div class="auth-card animate-fadeIn">
+    <div class="auth-header">
+      <div style="font-size:2.5rem;margin-bottom:0.5rem;">🎯</div>
+      <h2><%= lang === 'bn' ? 'স্বাগতম ফিরে!' : 'Welcome Back!' %></h2>
+      <p><%= lang === 'bn' ? 'আপনার অ্যাকাউন্টে লগইন করুন' : 'Sign in to your account' %></p>
+    </div>
+
+    <form action="/auth/login" method="POST">
+      <div class="form-group">
+        <label class="form-label"><%= lang === 'bn' ? 'ইমেইল' : 'Email Address' %></label>
+        <input type="email" name="email" class="form-control" placeholder="you@example.com" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="display:flex;justify-content:space-between;">
+          <span><%= lang === 'bn' ? 'পাসওয়ার্ড' : 'Password' %></span>
+          <a href="/auth/forgot" style="font-size:0.8rem;color:var(--primary);font-weight:600;"><%= lang === 'bn' ? 'ভুলে গেছেন?' : 'Forgot?' %></a>
+        </label>
+        <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg">
+        <%= lang === 'bn' ? 'লগইন করুন' : 'Sign In' %>
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <%= lang === 'bn' ? 'অ্যাকাউন্ট নেই?' : "Don't have an account?" %>
+      <a href="/auth/register"><%= lang === 'bn' ? ' নিবন্ধন করুন' : ' Register' %></a>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

@@ -1,0 +1,122 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active: 'team', role: 'admin'}) %>
+  <div class="main-content">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <div class="page-title">👥 Manage Team</div>
+        <div class="page-subtitle">Add, edit, or remove team members shown on the homepage</div>
+      </div>
+      <button onclick="openAddModal()" class="btn btn-primary">+ Add Member</button>
+    </div>
+    <div class="team-grid">
+      <% team.forEach(m => { %>
+      <div class="team-card">
+        <div class="team-photo">
+          <% if(m.photo) { %><img src="<%= m.photo.startsWith('http') ? m.photo : '/uploads/avatars/' + m.photo %>" alt="<%= m.name %>"><% } else { %>👤<% } %>
+        </div>
+        <div class="team-body">
+          <div class="team-name">
+            <%= m.name %>
+            <% if (!m.is_active) { %><span class="badge badge-secondary" style="margin-left:.4rem;">Hidden</span><% } %>
+          </div>
+          <div class="team-role"><%= m.role %></div>
+          <div class="team-desc" style="font-size:0.8rem;"><%= (m.description||'').substring(0,80) %></div>
+          <div style="display:flex;gap:.5rem;margin-top:1rem;">
+            <button type="button"
+              class="btn btn-secondary btn-sm btn-block"
+              onclick='openEditModal(<%- JSON.stringify(m) %>)'>✏️ Edit</button>
+            <form action="/admin/team/<%= m.id %>/delete" method="POST" style="flex:1;">
+              <button class="btn btn-danger btn-sm btn-block" data-confirm="Remove team member?">🗑️</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</div>
+
+<!-- ADD MODAL -->
+<div class="modal-overlay" id="addTeamModal">
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-header"><span class="modal-title">👥 Add Team Member</span><button class="modal-close" onclick="closeModal('addTeamModal')">✕</button></div>
+    <form action="/admin/team/add" method="POST" enctype="multipart/form-data">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group"><label class="form-label">Name (EN)</label><input type="text" name="name" class="form-control" required></div>
+        <div class="form-group"><label class="form-label">Name (BN)</label><input type="text" name="name_bn" class="form-control"></div>
+        <div class="form-group"><label class="form-label">Role (EN)</label><input type="text" name="role" class="form-control" required placeholder="e.g. Lead Teacher"></div>
+        <div class="form-group"><label class="form-label">Role (BN)</label><input type="text" name="role_bn" class="form-control" placeholder="প্রধান শিক্ষক"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Description (EN)</label><textarea name="description" class="form-control" rows="2"></textarea></div>
+      <div class="form-group"><label class="form-label">Description (BN)</label><textarea name="description_bn" class="form-control" rows="2"></textarea></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group"><label class="form-label">📘 Facebook URL</label><input type="url" name="facebook" class="form-control"></div>
+        <div class="form-group"><label class="form-label">📨 Telegram URL</label><input type="url" name="telegram" class="form-control"></div>
+        <div class="form-group"><label class="form-label">▶️ YouTube URL</label><input type="url" name="youtube" class="form-control"></div>
+        <div class="form-group"><label class="form-label">💬 WhatsApp Number</label><input type="text" name="whatsapp" class="form-control" placeholder="8801XXXXXXXXX"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Sort Order</label><input type="number" name="sort_order" class="form-control" value="0"></div>
+      <div class="form-group"><label class="form-label">Photo</label><input type="file" name="photo" class="form-control" accept="image/*"></div>
+      <button type="submit" class="btn btn-primary btn-block">Add Member</button>
+    </form>
+  </div>
+</div>
+
+<!-- EDIT MODAL (shared, populated via JS) -->
+<div class="modal-overlay" id="editTeamModal">
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-header"><span class="modal-title">✏️ Edit Team Member</span><button class="modal-close" onclick="closeModal('editTeamModal')">✕</button></div>
+    <form id="editTeamForm" method="POST" enctype="multipart/form-data">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group"><label class="form-label">Name (EN)</label><input type="text" name="name" id="edit_name" class="form-control" required></div>
+        <div class="form-group"><label class="form-label">Name (BN)</label><input type="text" name="name_bn" id="edit_name_bn" class="form-control"></div>
+        <div class="form-group"><label class="form-label">Role (EN)</label><input type="text" name="role" id="edit_role" class="form-control" required></div>
+        <div class="form-group"><label class="form-label">Role (BN)</label><input type="text" name="role_bn" id="edit_role_bn" class="form-control"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Description (EN)</label><textarea name="description" id="edit_description" class="form-control" rows="2"></textarea></div>
+      <div class="form-group"><label class="form-label">Description (BN)</label><textarea name="description_bn" id="edit_description_bn" class="form-control" rows="2"></textarea></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group"><label class="form-label">📘 Facebook URL</label><input type="url" name="facebook" id="edit_facebook" class="form-control"></div>
+        <div class="form-group"><label class="form-label">📨 Telegram URL</label><input type="url" name="telegram" id="edit_telegram" class="form-control"></div>
+        <div class="form-group"><label class="form-label">▶️ YouTube URL</label><input type="url" name="youtube" id="edit_youtube" class="form-control"></div>
+        <div class="form-group"><label class="form-label">💬 WhatsApp Number</label><input type="text" name="whatsapp" id="edit_whatsapp" class="form-control" placeholder="8801XXXXXXXXX"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-items:end;">
+        <div class="form-group"><label class="form-label">Sort Order</label><input type="number" name="sort_order" id="edit_sort_order" class="form-control"></div>
+        <div class="form-group" style="display:flex;align-items:center;gap:.5rem;padding-bottom:.6rem;">
+          <input type="checkbox" name="is_active" id="edit_is_active" value="1" style="width:18px;height:18px;cursor:pointer;">
+          <label for="edit_is_active" style="margin:0;cursor:pointer;font-weight:600;">Visible on homepage</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Photo <span style="color:var(--text3);font-weight:400;">(leave empty to keep current photo)</span></label>
+        <input type="file" name="photo" class="form-control" accept="image/*">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+    </form>
+  </div>
+</div>
+
+<script>
+function openAddModal() { openModal('addTeamModal'); }
+
+function openEditModal(member) {
+  document.getElementById('editTeamForm').action = '/admin/team/' + member.id + '/edit';
+  document.getElementById('edit_name').value = member.name || '';
+  document.getElementById('edit_name_bn').value = member.name_bn || '';
+  document.getElementById('edit_role').value = member.role || '';
+  document.getElementById('edit_role_bn').value = member.role_bn || '';
+  document.getElementById('edit_description').value = member.description || '';
+  document.getElementById('edit_description_bn').value = member.description_bn || '';
+  document.getElementById('edit_facebook').value = member.facebook || '';
+  document.getElementById('edit_telegram').value = member.telegram || '';
+  document.getElementById('edit_youtube').value = member.youtube || '';
+  document.getElementById('edit_whatsapp').value = member.whatsapp || '';
+  document.getElementById('edit_sort_order').value = member.sort_order || 0;
+  document.getElementById('edit_is_active').checked = !!member.is_active;
+  openModal('editTeamModal');
+}
+</script>
+
+<%- include('../partials/footer') %>

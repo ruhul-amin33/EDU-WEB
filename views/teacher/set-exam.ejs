@@ -1,0 +1,93 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active: 'set-exam', role: user.role}) %>
+  <div class="main-content">
+    <div class="page-header">
+      <div class="page-title">📝 <%= lang==='bn'?'শিক্ষার্থীদের জন্য পরীক্ষা সেট করুন':'Set Exam for Students' %></div>
+      <div class="page-subtitle"><%= lang==='bn'?'সম্পূর্ণ প্রশ্নব্যাংক থেকে পরীক্ষা তৈরি করুন — সময় ও প্রশ্ন সংখ্যা সম্পূর্ণ নিজের ইচ্ছামতো সেট করুন':'Create an exam from the full approved question bank — fully customize the time limit and question count' %></div>
+    </div>
+
+    <div style="max-width:640px;">
+      <div class="table-wrap" style="padding:2rem;margin-bottom:2rem;">
+        <form action="/teacher/set-exam" method="POST">
+          <div class="form-group">
+            <label class="form-label"><%= lang==='bn'?'পরীক্ষার নাম':'Exam Title' %> *</label>
+            <input type="text" name="title" class="form-control" required placeholder="e.g. HSC Physics Chapter 3 Mock Test">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label"><%= lang==='bn'?'স্তর':'Level' %> *</label>
+              <select name="level" class="form-control" required>
+                <option value="ssc">SSC</option>
+                <option value="hsc">HSC</option>
+                <option value="admission">Admission</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label"><%= lang==='bn'?'বিভাগ':'Stream' %></label>
+              <select name="stream" class="form-control">
+                <option value="all">All</option><option value="science">Science</option><option value="arts">Arts</option><option value="commerce">Commerce</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label"><%= lang==='bn'?'বিষয় (ঐচ্ছিক)':'Subject (optional)' %></label>
+              <select name="subject" class="form-control">
+                <option value="">All Subjects</option>
+                <% subjects.forEach(s => { %><option value="<%= s.subject %>"><%= s.subject %></option><% }) %>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label"><%= lang==='bn'?'অধ্যায় (ঐচ্ছিক)':'Chapter (optional)' %></label>
+              <input type="text" name="chapter" class="form-control" placeholder="e.g. Chapter 3">
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label"><%= lang==='bn'?'প্রশ্ন সংখ্যা':'Number of Questions' %> *</label>
+              <input type="number" name="question_count" class="form-control" min="1" max="200" value="20" required>
+              <div class="form-hint"><%= lang==='bn'?'যেকোনো সংখ্যা দিন (১-২০০)':'Enter any number (1-200)' %></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label"><%= lang==='bn'?'সময়সীমা (মিনিট)':'Time Limit (minutes)' %> *</label>
+              <input type="number" name="time_limit" class="form-control" min="1" max="600" value="30" required>
+              <div class="form-hint"><%= lang==='bn'?'যেকোনো সময় দিন (১-৬০০ মিনিট)':'Enter any duration (1-600 minutes)' %></div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block btn-lg">🚀 <%= lang==='bn'?'পরীক্ষা তৈরি করুন':'Create Exam' %></button>
+        </form>
+      </div>
+
+      <!-- Existing templates -->
+      <div style="font-weight:800;font-size:1rem;margin-bottom:1rem;color:var(--text);">
+        📋 <%= lang==='bn'?'তৈরি করা পরীক্ষাসমূহ':'Exams Created So Far' %>
+      </div>
+      <% if (templates && templates.length) { %>
+        <% templates.forEach(function(t) { %>
+        <div class="table-wrap" style="padding:1.1rem 1.4rem;margin-bottom:.85rem;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.6rem;">
+            <div>
+              <div style="font-weight:700;font-size:.95rem;color:var(--text);"><%= t.title %></div>
+              <div style="font-size:.8rem;color:var(--text3);margin-top:.2rem;">
+                <%= t.level.toUpperCase() %> · <%= t.stream %> <%= t.subject ? '· '+t.subject : '' %> · <%= t.question_count %> Q · <%= t.time_limit %> min
+              </div>
+              <div style="font-size:.75rem;color:var(--text3);margin-top:.2rem;">By <%= t.creator_name %> · <%= t.attempt_count %> attempt(s)</div>
+            </div>
+            <div style="display:flex;gap:.4rem;align-items:center;flex-shrink:0;">
+              <span class="badge <%= t.is_active ? 'badge-success' : 'badge-secondary' %>"><%= t.is_active ? 'Active' : 'Hidden' %></span>
+              <form action="/teacher/set-exam/<%= t.id %>/toggle" method="POST"><button class="btn btn-secondary btn-sm"><%= t.is_active ? 'Hide' : 'Show' %></button></form>
+              <form action="/teacher/set-exam/<%= t.id %>/delete" method="POST"><button class="btn btn-danger btn-sm" data-confirm="Delete this exam template?">🗑️</button></form>
+            </div>
+          </div>
+        </div>
+        <% }) %>
+      <% } else { %>
+        <div class="table-wrap" style="padding:2rem;text-align:center;color:var(--text3);">
+          <%= lang==='bn'?'এখনো কোনো পরীক্ষা তৈরি করা হয়নি।':'No exams created yet.' %>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

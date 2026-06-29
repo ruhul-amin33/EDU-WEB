@@ -1,0 +1,72 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active: 'reviews', role: 'admin'}) %>
+  <div class="main-content">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <div class="page-title">⭐ Manage Reviews</div>
+        <div class="page-subtitle">Approve student reviews, or add your own showcase testimonials</div>
+      </div>
+      <button onclick="openModal('addReviewModal')" class="btn btn-primary">➕ Add Review</button>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:1rem;">
+      <% reviews.forEach(r => { %>
+      <div class="table-wrap" style="padding:1.25rem;">
+        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.5rem;">
+          <div>
+            <strong><%= r.student_name %></strong>
+            <% if (r.created_by_admin) { %><span class="badge badge-secondary" style="margin-left:.4rem;">Admin-added</span><% } %>
+            <span style="color:#f59e0b;margin-left:0.5rem;"><%= '⭐'.repeat(r.rating) %></span>
+          </div>
+          <div style="display:flex;gap:0.5rem;align-items:center;">
+            <span class="badge <%= r.is_approved?'badge-success':'badge-warning' %>"><%= r.is_approved?'Approved':'Pending' %></span>
+            <span style="font-size:0.75rem;color:var(--text3);"><%= new Date(r.created_at).toLocaleDateString() %></span>
+          </div>
+        </div>
+        <p style="color:var(--text2);font-size:0.92rem;margin-bottom:0.75rem;">"<%= r.review_text %>"</p>
+        <div style="display:flex;gap:0.5rem;">
+          <% if(!r.is_approved) { %><form action="/admin/reviews/<%= r.id %>/approve" method="POST"><button class="btn btn-success btn-sm">✅ Approve</button></form><% } %>
+          <form action="/admin/reviews/<%= r.id %>/delete" method="POST"><button class="btn btn-danger btn-sm" data-confirm="Delete review?">🗑️ Delete</button></form>
+        </div>
+      </div>
+      <% }) %>
+      <% if(!reviews.length) { %><div class="table-wrap" style="padding:3rem;text-align:center;color:var(--text3);">No reviews yet.</div><% } %>
+    </div>
+  </div>
+</div>
+
+<!-- Add Review Modal -->
+<div class="modal-overlay" id="addReviewModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">➕ Add Review / Testimonial</span>
+      <button class="modal-close" onclick="closeModal('addReviewModal')">✕</button>
+    </div>
+    <form action="/admin/reviews/add" method="POST">
+      <div class="form-group">
+        <label class="form-label">Name</label>
+        <input type="text" name="display_name" class="form-control" placeholder="e.g. Rahim Uddin" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Role / Stream (optional)</label>
+        <input type="text" name="display_role" class="form-control" placeholder="e.g. HSC Science Student">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Rating</label>
+        <select name="rating" class="form-control">
+          <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+          <option value="4">⭐⭐⭐⭐ (4)</option>
+          <option value="3">⭐⭐⭐ (3)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Review Text</label>
+        <textarea name="review_text" class="form-control" rows="3" required placeholder="Write the testimonial..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">✅ Publish Review</button>
+    </form>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

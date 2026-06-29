@@ -1,0 +1,61 @@
+<%- include('../partials/layout') %>
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar', {active: 'profile', role: 'student'}) %>
+  <div class="main-content">
+    <div class="page-header"><div class="page-title">👤 <%= lang==='bn'?'আমার প্রোফাইল':'My Profile' %></div></div>
+    <div style="max-width:500px;">
+      <div class="table-wrap" style="padding:2rem;">
+        <div style="text-align:center;margin-bottom:2rem;">
+          <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-size:2rem;color:white;font-weight:900;margin:0 auto 1rem;">
+            <%= profile.name[0].toUpperCase() %>
+          </div>
+          <div style="font-weight:800;font-size:1.2rem;color:var(--text);"><%= profile.name %></div>
+          <div style="font-size:0.85rem;color:var(--text3);"><%= profile.email %></div>
+          <span class="badge badge-primary" style="margin-top:0.5rem;"><%= profile.role %></span>
+        </div>
+        <form action="/student/profile" method="POST">
+          <div class="form-group">
+            <label class="form-label"><%= lang==='bn'?'পূর্ণ নাম':'Full Name' %></label>
+            <input type="text" name="name" class="form-control" value="<%= profile.name %>" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><%= lang==='bn'?'পরীক্ষার স্তর':'Level' %></label>
+            <select name="level" class="form-control" id="profileLevelSelect" onchange="document.getElementById('profileSessionWrap').style.display='block'">
+              <option value="ssc" <%= profile.level==='ssc'?'selected':'' %>>SSC</option>
+              <option value="hsc" <%= profile.level==='hsc'?'selected':'' %>>HSC</option>
+              <option value="admission" <%= profile.level==='admission'?'selected':'' %>><%= lang==='bn'?'ভর্তি':'Admission' %></option>
+            </select>
+          </div>
+          <div class="form-group" id="profileSessionWrap">
+            <label class="form-label">📅 <%= lang==='bn'?'আপনার সাল':'Your Year' %></label>
+            <input type="text" name="hsc_session" class="form-control" list="profileYearList" value="<%= profile.hsc_session||'' %>" placeholder="<%= lang==='bn'?'যেমন 2026, অথবা নিজের লিখুন':'e.g. 2026, or type your own' %>">
+            <datalist id="profileYearList">
+              <% ['2024','2025','2026','2027','2028'].forEach(function(yr){ %>
+              <option value="<%=yr%>"></option>
+              <% }) %>
+            </datalist>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><%= lang==='bn'?'বিভাগ':'Stream' %></label>
+            <select name="stream" class="form-control">
+              <option value="science" <%= profile.stream==='science'?'selected':'' %>><%= lang==='bn'?'বিজ্ঞান':'Science' %></option>
+              <option value="arts" <%= profile.stream==='arts'?'selected':'' %>><%= lang==='bn'?'মানবিক':'Arts' %></option>
+              <option value="commerce" <%= profile.stream==='commerce'?'selected':'' %>><%= lang==='bn'?'বাণিজ্য':'Commerce' %></option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><%= lang==='bn'?'ইমেইল':'Email' %></label>
+            <input type="email" class="form-control" value="<%= profile.email %>" disabled style="opacity:0.6;">
+            <div class="form-hint"><%= lang==='bn'?'ইমেইল পরিবর্তন করা যাবে না':'Email cannot be changed' %></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><%= lang==='bn'?'যোগদানের তারিখ':'Member Since' %></label>
+            <input type="text" class="form-control" value="<%= new Date(profile.created_at).toLocaleDateString('en-BD',{year:'numeric',month:'long',day:'numeric'}) %>" disabled style="opacity:0.6;">
+          </div>
+          <button type="submit" class="btn btn-primary btn-block"><%= lang==='bn'?'প্রোফাইল আপডেট করুন':'Update Profile' %></button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

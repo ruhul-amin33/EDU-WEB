@@ -1,0 +1,356 @@
+<%- include('partials/layout') %>
+
+<%
+  // Helper: convert **word** markup from admin content editor into the gradient highlight span
+  function renderHeroTitle(text) {
+    return text.replace(/\*\*(.+?)\*\*/g, '<span class="highlight">$1</span>');
+  }
+  var heroTitle = lang === 'bn' ? settings.hero_title_bn : settings.hero_title_en;
+  var heroSubtitle = lang === 'bn' ? settings.hero_subtitle_bn : settings.hero_subtitle_en;
+  var heroSpacingMap = { compact: '2.5', normal: '6', spacious: '10' };
+  var heroExtraRem = heroSpacingMap[settings.hero_spacing] || '6';
+  var layoutStyle = settings.layout_style || 'classic';
+%>
+
+<!-- HERO BUTTONS (shared markup, reused across every layout variant) -->
+<%
+  function heroButtons() {
+    if (!user) {
+      return '<a href="/auth/register" class="btn btn-primary btn-lg">🚀 ' + (lang==='bn'?'বিনামূল্যে শুরু করুন':'Get Started Free') + '</a>' +
+             '<a href="/auth/login" class="btn btn-secondary btn-lg">' + (lang==='bn'?'লগইন করুন':'Login') + '</a>';
+    }
+    return '<a href="/exam/setup" class="btn btn-primary btn-lg">📝 ' + (lang==='bn'?'পরীক্ষা দিন':'Take Exam') + '</a>' +
+           '<a href="/materials" class="btn btn-secondary btn-lg">📚 ' + (lang==='bn'?'ম্যাটেরিয়াল':'Materials') + '</a>';
+  }
+  var statsList = [
+    { num: settings.stat_students, label: lang==='bn'?'শিক্ষার্থী':'Students' },
+    { num: settings.stat_questions, label: lang==='bn'?'প্রশ্ন':'Questions' },
+    { num: settings.stat_pdfs, label: lang==='bn'?'পিডিএফ':'PDFs' },
+    { num: settings.stat_satisfaction, label: lang==='bn'?'সন্তুষ্টি':'Satisfaction' }
+  ];
+%>
+
+<% if (layoutStyle === 'corporate') { %>
+<!-- HERO — CORPORATE (split two-column, SaaS/B2B style) -->
+<section class="hero hero-corporate" style="--hero-extra:<%= heroExtraRem %>rem;">
+  <div class="hero-split">
+    <div class="hero-split-left">
+      <span class="hero-eyebrow"><%= lang==='bn'?'বাংলাদেশের #১ শিক্ষা প্ল্যাটফর্ম':'#1 Education Platform in Bangladesh' %></span>
+      <h1><%- renderHeroTitle(heroTitle) %></h1>
+      <p class="hero-sub" style="margin-left:0;"><%= heroSubtitle %></p>
+      <div class="hero-btns" style="justify-content:flex-start;"><%- heroButtons() %></div>
+    </div>
+    <div class="hero-split-right">
+      <div class="hero-stat-panel">
+        <% statsList.forEach(function(s){ %>
+        <div class="hero-stat-row">
+          <span class="hero-stat-num"><%= s.num %></span>
+          <span class="hero-stat-label"><%= s.label %></span>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<% } else if (layoutStyle === 'editorial') { %>
+<!-- HERO — EDITORIAL (left-aligned, big type, Stripe/Linear style) -->
+<section class="hero hero-editorial" style="--hero-extra:<%= heroExtraRem %>rem;">
+  <div class="hero-editorial-inner">
+    <h1><%- renderHeroTitle(heroTitle) %></h1>
+    <p class="hero-sub"><%= heroSubtitle %></p>
+    <div class="hero-btns"><%- heroButtons() %></div>
+    <div class="hero-editorial-stats">
+      <% statsList.forEach(function(s,i){ %>
+      <span><strong><%= s.num %></strong> <%= s.label %></span><% if(i<statsList.length-1){ %><span class="dot">•</span><% } %>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<% } else if (layoutStyle === 'bold') { %>
+<!-- HERO — BOLD (full gradient, floating badge + glass stat cards, startup-landing style) -->
+<section class="hero hero-bold" style="--hero-extra:<%= heroExtraRem %>rem;">
+  <div class="hero-inner">
+    <span class="hero-bold-badge">✨ <%= lang==='bn'?'নতুন প্রজন্মের শিক্ষা প্ল্যাটফর্ম':'Next-Gen Learning Platform' %></span>
+    <h1><%- renderHeroTitle(heroTitle) %></h1>
+    <p class="hero-sub"><%= heroSubtitle %></p>
+    <div class="hero-btns"><%- heroButtons() %></div>
+    <div class="hero-bold-stats">
+      <% statsList.forEach(function(s){ %>
+      <div class="hero-bold-stat-card"><span class="stat-num"><%= s.num %></span><span class="stat-label"><%= s.label %></span></div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<% } else { %>
+<!-- HERO — CLASSIC (default, centered) -->
+<section class="hero" style="--hero-extra:<%= heroExtraRem %>rem;">
+  <div class="hero-inner">
+    <h1><%- renderHeroTitle(heroTitle) %></h1>
+    <p class="hero-sub"><%= heroSubtitle %></p>
+    <div class="hero-btns"><%- heroButtons() %></div>
+    <div class="hero-stats">
+      <% statsList.forEach(function(s){ %>
+      <div><span class="stat-num"><%= s.num %></span><span class="stat-label"><%= s.label %></span></div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- ACTION CARDS -->
+<section style="background:var(--bg2);padding:4.5rem 2rem;">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow"><%=lang==='bn'?'আপনি কী করতে পারবেন':'What You Can Do'%></span>
+      <h2 class="section-title"><%=lang==='bn'?'সব সুবিধা এক জায়গায়':'Everything in One Place'%></h2>
+      <p class="section-subtitle"><%=lang==='bn'?'যেকোনো সুবিধায় ক্লিক করুন। Account না থাকলে বিনামূল্যে Register করুন!':'Click any feature. No account? Register completely free!'%></p>
+    </div>
+    <div class="action-cards">
+      <a href="<%=user?'/exam/browse':'/auth/register'%>" class="action-card">
+        <div class="ac-icon">📖</div>
+        <div class="ac-title"><%=lang==='bn'?'প্রশ্ন পড়ুন':'Browse & Study Questions'%></div>
+        <div class="ac-desc"><%=lang==='bn'?'কোনো টাইমার ছাড়াই নিজের মতো সময় নিয়ে প্রশ্ন, উত্তর ও ব্যাখ্যা পড়ুন। বিষয় ও অধ্যায় অনুযায়ী ফিল্টার করুন।':'Read questions, answers and explanations at your own pace — no timer. Filter by subject and chapter.'%></div>
+        <span class="ac-badge">📚 <%=user?(lang==='bn'?'এখনই পড়ুন':'Start Reading'):(lang==='bn'?'বিনামূল্যে Register':'Register Free')%></span>
+      </a>
+      <a href="<%=user?'/exam/setup':'/auth/register'%>" class="action-card">
+        <div class="ac-icon">📝</div>
+        <div class="ac-title"><%=lang==='bn'?'MCQ পরীক্ষা দিন':'Practice MCQ Exam'%></div>
+        <div class="ac-desc"><%=lang==='bn'?'নিজের পছন্দমতো বিষয়, প্রশ্ন সংখ্যা ও সময় নির্ধারণ করে পরীক্ষা দিন। প্রতিটি প্রশ্নে বিস্তারিত ব্যাখ্যা পাবেন।':'Set your own subject, question count & time. Get detailed explanations for every answer.'%></div>
+        <span class="ac-badge">⚡ <%=user?(lang==='bn'?'এখনই শুরু':'Start Now'):(lang==='bn'?'বিনামূল্যে Register':'Register Free')%></span>
+      </a>
+      <a href="<%=user?'/materials':'/auth/register'%>" class="action-card">
+        <div class="ac-icon">📚</div>
+        <div class="ac-title"><%=lang==='bn'?'PDF ডাউনলোড করুন':'Download Study Materials'%></div>
+        <div class="ac-desc"><%=lang==='bn'?'SSC ও HSC এর প্রশ্নব্যাংক, বই ও নোট বিনামূল্যে ডাউনলোড করুন। বিজ্ঞান, মানবিক ও বাণিজ্য সব বিভাগের জন্য।':'Download question banks, books & notes for all SSC & HSC streams — free.'%></div>
+        <span class="ac-badge">📥 <%=user?(lang==='bn'?'ডাউনলোড করুন':'Download Now'):(lang==='bn'?'বিনামূল্যে Register':'Register Free')%></span>
+      </a>
+      <a href="/courses" class="action-card">
+        <div class="ac-icon">🎓</div>
+        <div class="ac-title"><%=lang==='bn'?'কোর্সে ভর্তি হন':'Enroll in Courses'%></div>
+        <div class="ac-desc"><%=lang==='bn'?'বিশেষজ্ঞ শিক্ষকদের পরিচালিত সম্পূর্ণ কোর্স। ভিডিও লেকচার, নোটস ও লাইভ সেশন সহ সম্পূর্ণ সিলেবাস।':'Expert-led courses with video lectures, notes & live sessions. Full syllabus.'%></div>
+        <span class="ac-badge">🎯 <%=lang==='bn'?'কোর্স দেখুন':'Browse Courses'%></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section style="background:var(--bg);padding:4.5rem 2rem;">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow"><%=lang==='bn'?'কীভাবে কাজ করে':'How It Works'%></span>
+      <h2 class="section-title"><%=lang==='bn'?'মাত্র ৩ ধাপে শুরু করুন':'Start in 3 Simple Steps'%></h2>
+    </div>
+    <div class="features-grid">
+      <% var steps=lang==='bn'?[
+        {num:'01',icon:'📝',title:'নিবন্ধন করুন',desc:'বিনামূল্যে অ্যাকাউন্ট তৈরি করুন এবং আপনার SSC/HSC বিভাগ বেছে নিন'},
+        {num:'02',icon:'📚',title:'শিখুন ও ডাউনলোড',desc:'PDF ম্যাটেরিয়াল ডাউনলোড করুন এবং বিশেষজ্ঞ কোর্সে যোগ দিন'},
+        {num:'03',icon:'🏆',title:'পরীক্ষা দিন ও এগিয়ে যান',desc:'প্র্যাকটিস পরীক্ষা দিন, ফলাফল বিশ্লেষণ করুন এবং লক্ষ্যে পৌঁছান'}
+      ]:[
+        {num:'01',icon:'📝',title:'Register Free',desc:'Create your account in seconds and choose your SSC or HSC stream'},
+        {num:'02',icon:'📚',title:'Study & Download',desc:'Download free PDF materials and join expert-led courses anytime'},
+        {num:'03',icon:'🏆',title:'Practice & Excel',desc:'Take timed MCQ exams, analyze results and reach your academic goals'}
+      ]; %>
+      <%steps.forEach(function(s){%>
+      <div class="feature-card">
+        <div style="width:40px;height:40px;background:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:.78rem;margin:0 auto .85rem;"><%=s.num%></div>
+        <div class="feature-icon"><%=s.icon%></div>
+        <div class="feature-title"><%=s.title%></div>
+        <div class="feature-desc"><%=s.desc%></div>
+      </div>
+      <%})%>
+    </div>
+  </div>
+</section>
+
+<!-- COURSES -->
+<section style="background:var(--bg2);padding:4.5rem 2rem;">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow"><%=lang==='bn'?'কোর্সসমূহ':'Courses'%></span>
+      <h2 class="section-title"><%=lang==='bn'?'জনপ্রিয় কোর্সসমূহ':'Popular Courses'%></h2>
+      <p class="section-subtitle"><%=lang==='bn'?'বিশেষজ্ঞ শিক্ষকদের তৈরি সেরা কোর্স':'Expert-crafted courses for exam excellence'%></p>
+    </div>
+    <%if(courses&&courses.length){%>
+    <div class="courses-grid">
+      <%courses.forEach(function(c){%>
+      <div class="course-card">
+        <div class="course-thumb">
+          <%if(c.thumbnail){%><img src="/uploads/<%=c.thumbnail%>" alt="<%=c.title%>"><%}else{%><span>🎓</span><%}%>
+          <div class="course-level-badge"><%=c.level.toUpperCase()%></div>
+          <%if(c.original_price>c.price&&c.price>0){%><div style="position:absolute;bottom:.52rem;left:.52rem;background:var(--danger);color:#fff;padding:.14rem .48rem;border-radius:50px;font-size:.62rem;font-weight:700;"><%=Math.round((c.original_price-c.price)/c.original_price*100)%>% OFF</div><%}%>
+        </div>
+        <div class="course-body">
+          <div>
+            <div class="course-title"><%=lang==='bn'&&c.title_bn?c.title_bn:c.title%> <span class="course-verified">✅</span></div>
+            <div class="course-rating" style="margin-bottom:.4rem;"><span class="stars">★★★★☆</span><span class="rating-count">(<%=c.enrolled_count%> <%=lang==='bn'?'শিক্ষার্থী':'enrolled'%>)</span></div>
+            <ul class="course-features">
+              <%var desc=(lang==='bn'&&c.description_bn?c.description_bn:c.description)||'';var lines=desc.split('\n').filter(function(l){return l.trim();}).slice(0,3);%>
+              <%if(lines.length){lines.forEach(function(l){%><li><%=l.trim()%></li><%});}else{%>
+              <li><%=lang==='bn'?'বিশেষজ্ঞ শিক্ষক পরিচালিত':'Expert teacher-led'%></li>
+              <li><%=lang==='bn'?'সম্পূর্ণ সিলেবাস কভার':'Full syllabus coverage'%></li>
+              <%}%>
+            </ul>
+          </div>
+          <div class="course-footer">
+            <div>
+              <div class="course-price"><%=c.price==0?(lang==='bn'?'বিনামূল্যে':'Free'):'৳'+c.price%></div>
+              <%if(c.original_price>c.price){%><div class="course-price-orig">৳<%=c.original_price%></div><%}%>
+            </div>
+            <div class="course-actions">
+              <button onclick="if(navigator.share)navigator.share({title:'<%=c.title%>',url:location.origin+'/courses/<%=c.id%>'})" class="btn-course-share">➦ <%=lang==='bn'?'শেয়ার':'Share'%></button>
+              <a href="/courses/<%=c.id%>" class="btn-course-view">ℹ <%=lang==='bn'?'বিস্তারিত':'View Courses'%></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <%})%>
+    </div>
+    <%}else{%>
+    <div style="text-align:center;padding:3rem;color:var(--text3);"><div style="font-size:2.4rem;margin-bottom:.7rem;">🎓</div><p><%=lang==='bn'?'শীঘ্রই কোর্স আসছে...':'Courses coming soon...'%></p></div>
+    <%}%>
+    <div class="text-center mt-3"><a href="/courses" class="btn btn-secondary"><%=lang==='bn'?'সব কোর্স দেখুন':'View All Courses'%> →</a></div>
+  </div>
+</section>
+
+<!-- STUDY MATERIALS — folder style, driven by actual admin-created folders -->
+<section style="background:var(--bg);padding:4.5rem 2rem;">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow"><%=lang==='bn'?'স্টাডি ম্যাটেরিয়াল':'Study Materials'%></span>
+      <h2 class="section-title"><%=lang==='bn'?'ফোল্ডার ব্রাউজ করুন':'Browse by Folder'%></h2>
+      <p class="section-subtitle"><%=lang==='bn'?'ফোল্ডার সিলেক্ট করুন → ভিতরে যান → PDF ডাউনলোড করুন':'Select a folder → go inside → download your PDFs'%></p>
+    </div>
+    <% if(materialFolders && materialFolders.length) { %>
+    <div class="materials-folder-grid">
+      <% var folderColors=['#5B6CF9,#8b96ff','#FF6B35,#ff9a6c','#00D4AA,#33dcbb','#f59e0b,#fbbf24','#8b5cf6,#a78bfa','#ec4899,#f472b6']; %>
+      <% materialFolders.forEach(function(f, i){ %>
+      <a href="<%=user?'/materials/browse/'+f.id:'/auth/register'%>" class="folder-card">
+        <div class="folder-card-thumb" style="background:linear-gradient(135deg,<%=folderColors[i%folderColors.length]%>)">
+          <span style="font-size:2.5rem;"><%=f.icon||'📁'%></span>
+        </div>
+        <div class="folder-card-body">
+          <div>
+            <div class="folder-card-title"><%=lang==='bn'&&f.name_bn?f.name_bn:f.name%></div>
+            <div class="folder-card-meta"><%=lang==='bn'?'ফোল্ডার':'Folder'%></div>
+          </div>
+          <div class="folder-card-footer">
+            <span class="folder-card-count">📁 <%=lang==='bn'?'ফোল্ডার খুলুন':'Open Folder'%></span>
+            <span style="font-size:.75rem;font-weight:700;color:var(--primary);"><%=user?'→':(lang==='bn'?'Login →':'Login →')%></span>
+          </div>
+        </div>
+      </a>
+      <% }) %>
+    </div>
+    <% } else { %>
+    <div style="text-align:center;padding:3rem;color:var(--text3);">
+      <div style="font-size:2.5rem;margin-bottom:.7rem;">📂</div>
+      <p><%=lang==='bn'?'শীঘ্রই ফোল্ডার যুক্ত হবে':'Folders coming soon'%></p>
+    </div>
+    <% } %>
+    <div class="text-center mt-3"><a href="/materials" class="btn btn-secondary"><%=lang==='bn'?'সব ম্যাটেরিয়াল দেখুন':'View All Materials'%> →</a></div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section style="background:var(--bg2);padding:4.5rem 0;">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow"><%=lang==='bn'?'শিক্ষার্থীদের মন্তব্য':'Student Reviews'%></span>
+      <h2 class="section-title"><%=lang==='bn'?'তারা কী বলছেন':'What Students Say'%></h2>
+    </div>
+  </div>
+  <div class="reviews-track-wrapper">
+    <div class="reviews-track">
+      <%var dr=[
+        {name:'রাহিম উদ্দিন',stream:'HSC Science',review_text:'পারাফিনের কারণে পদার্থবিজ্ঞানে A+ এসেছে! অসাধারণ প্ল্যাটফর্ম।'},
+        {name:'ফাতেমা খানম',stream:'SSC Arts',review_text:'প্রশ্নব্যাংক এবং ব্যাখ্যা খুবই helpful। সব বিষয় সহজে বুঝতে পারছি।'},
+        {name:'তানভীর হোসেন',stream:'HSC Commerce',review_text:'পরীক্ষার প্র্যাকটিস সিস্টেম দারুণ। প্রতিদিন পরীক্ষা দিচ্ছি।'},
+        {name:'নুসরাত জাহান',stream:'SSC Science',review_text:'PDF ম্যাটেরিয়াল গুলো সুন্দরভাবে সাজানো। চমৎকার প্ল্যাটফর্ম!'},
+        {name:'করিম মোল্লা',stream:'HSC Arts',review_text:'সব বন্ধুদের Parafin recommend করেছি। সত্যিই অসাধারণ!'},
+        {name:'সাদিয়া আক্তার',stream:'SSC Commerce',review_text:'টাইমার সহ পরীক্ষা দেওয়া অনেক কাজে লাগছে। ধন্যবাদ পারাফিন।'}
+      ];var rl=(reviews&&reviews.length>0)?reviews:dr;%>
+      <%rl.concat(rl).forEach(function(r){%>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <div class="review-text">"<%=r.review_text%>"</div>
+        <div class="review-author">
+          <div class="review-avatar"><%=(r.name||r.user_name||'S')[0]%></div>
+          <div><div class="review-name"><%=r.name||r.user_name%></div><div class="review-role"><%=r.stream||'Student'%></div></div>
+        </div>
+      </div>
+      <%})%>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section style="background:var(--bg);padding:4.5rem 2rem;" id="team">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow"><%=lang==='bn'?'আমাদের দল':'Our Team'%></span>
+      <h2 class="section-title"><%=lang==='bn'?'পারাফিন পরিবার':'Instructor Collaborations'%></h2>
+      <p class="section-subtitle"><%=lang==='bn'?'আপনার সাফল্যের জন্য নিবেদিত বিশেষজ্ঞ দল':'Our passionate experts dedicated to your academic success'%></p>
+    </div>
+    <%if(team&&team.length){%>
+    <div class="team-grid">
+      <%team.forEach(function(m){%>
+      <div class="team-card">
+        <div class="team-photo-wrap">
+          <div class="team-photo-inner">
+            <%if(m.photo){%><img src="<%= m.photo.startsWith('http') ? m.photo : '/uploads/avatars/' + m.photo %>" alt="<%=m.name%>"><%}else{%><span>👤</span><%}%>
+          </div>
+        </div>
+        <div class="team-body">
+          <div class="team-name"><%=lang==='bn'&&m.name_bn?m.name_bn:m.name%></div>
+          <%if(m.description){%><div class="team-qual"><%=(lang==='bn'&&m.description_bn?m.description_bn:m.description).split('\n')[0]%></div><%}%>
+          <div class="team-role"><%=lang==='bn'&&m.role_bn?m.role_bn:m.role%></div>
+          <div class="team-socials">
+            <%if(m.facebook){%><a href="<%=m.facebook%>" class="team-social-btn" target="_blank" rel="noopener" title="Facebook"><%- include('partials/social-icons', {icon:'facebook'}) %></a><%}%>
+            <%if(m.telegram){%><a href="<%=m.telegram%>" class="team-social-btn" target="_blank" rel="noopener" title="Telegram"><%- include('partials/social-icons', {icon:'telegram'}) %></a><%}%>
+            <%if(m.youtube){%><a href="<%=m.youtube%>" class="team-social-btn" target="_blank" rel="noopener" title="YouTube"><%- include('partials/social-icons', {icon:'youtube'}) %></a><%}%>
+            <%if(m.whatsapp){%><a href="https://wa.me/<%=m.whatsapp%>" class="team-social-btn" target="_blank" rel="noopener" title="WhatsApp"><%- include('partials/social-icons', {icon:'whatsapp'}) %></a><%}%>
+          </div>
+          <div class="team-subject"><%=lang==='bn'?'বিষয়: ':'Instructor of '%><%=m.role%></div>
+          <a href="/courses" class="btn-all-courses">🛒 <%=lang==='bn'?'সব কোর্স':'All Courses'%></a>
+        </div>
+      </div>
+      <%})%>
+    </div>
+    <%}%>
+  </div>
+</section>
+
+<!-- Purchase Modal -->
+<div class="modal-overlay" id="purchaseModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">🛒 <%=lang==='bn'?'কোর্স কিনুন':'Purchase Course'%></span>
+      <button class="modal-close" onclick="closeModal('purchaseModal')">✕</button>
+    </div>
+    <%if(!user){%>
+      <p style="color:var(--text2);margin-bottom:1.4rem;"><%=lang==='bn'?'কোর্স কিনতে লগইন করুন।':'Please login to purchase.'%></p>
+      <a href="/auth/login" class="btn btn-primary btn-block">Login</a>
+    <%}else{%>
+    <form action="/courses/purchase" method="POST">
+      <input type="hidden" name="course_id" id="purchaseCourseId">
+      <div class="form-group"><label class="form-label"><%=lang==='bn'?'মূল্য':'Amount'%>: <strong id="purchaseAmount"></strong></label></div>
+      <div class="form-group">
+        <label class="form-label"><%=lang==='bn'?'পেমেন্ট':'Payment'%></label>
+        <select name="payment_method" class="form-control"><option value="bkash">bKash</option><option value="nagad">Nagad</option><option value="rocket">Rocket</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Transaction ID</label>
+        <input type="text" name="transaction_id" class="form-control" placeholder="BK123456789" required>
+        <div class="form-hint"><%=lang==='bn'?'২৪ ঘণ্টার মধ্যে অ্যাক্টিভ হবে।':'Activated within 24 hours.'%></div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">✅ <%=lang==='bn'?'নিশ্চিত করুন':'Confirm'%></button>
+    </form>
+    <%}%>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
