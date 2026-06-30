@@ -1,0 +1,296 @@
+/* =========================================================
+   Sattacademy-style Dashboard Theme
+   Drop this file into: public/css/sattacademy-dashboard.css
+   Then link it AFTER your main style.css in layout.ejs:
+   <link rel="stylesheet" href="/css/sattacademy-dashboard.css">
+   ========================================================= */
+
+:root{
+  --sa-bg:           #121214;
+  --sa-bg-soft:      #18181b;
+  --sa-card:         #1c1c20;
+  --sa-card-2:       #1e1e23;
+  --sa-border:       #2a2a30;
+  --sa-text:         #f5f5f7;
+  --sa-text-dim:     #9ca3af;
+  --sa-text-muted:   #6b7280;
+
+  --sa-purple:       #9333ea;
+  --sa-purple-2:     #c026d3;
+  --sa-purple-soft:  rgba(147,51,234,.45);
+
+  --sa-orange:       #f59e0b;
+  --sa-green:        #22c55e;
+  --sa-blue:         #3b82f6;
+  --sa-red:          #ef4444;
+
+  --sa-radius-lg:    18px;
+  --sa-radius-md:    14px;
+  --sa-radius-sm:    10px;
+  --sa-radius-pill:  999px;
+}
+
+.sa-dashboard{
+  background: var(--sa-bg);
+  color: var(--sa-text);
+  font-family: "Hind Siliguri","Inter",sans-serif;
+  min-height: 100vh;
+  padding-bottom: 90px; /* space for bottom nav */
+}
+
+/* ---------- Top bar ---------- */
+.sa-topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 16px;
+  background:var(--sa-bg);
+}
+.sa-topbar-left{ display:flex; align-items:center; gap:10px; }
+.sa-topbar-title{ font-size:20px; font-weight:700; }
+.sa-topbar-right{ display:flex; align-items:center; gap:16px; }
+
+.sa-xp-badge{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  padding:6px 14px;
+  border-radius:var(--sa-radius-pill);
+  background:rgba(245,158,11,.12);
+  border:1px solid rgba(245,158,11,.4);
+  color:var(--sa-orange);
+  font-weight:700;
+  font-size:13px;
+}
+
+.sa-icon-btn{
+  position:relative;
+  width:38px; height:38px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:50%;
+  color:var(--sa-text-dim);
+}
+.sa-icon-btn .sa-dot{
+  position:absolute; top:6px; right:6px;
+  width:8px; height:8px; border-radius:50%;
+  background:var(--sa-red);
+  border:2px solid var(--sa-bg);
+}
+.sa-avatar{
+  width:36px; height:36px; border-radius:50%;
+  background:#3a3a40; object-fit:cover;
+}
+
+/* ---------- Notification ticker ---------- */
+.sa-ticker{
+  display:flex; align-items:center; gap:24px;
+  padding:10px 16px;
+  background:var(--sa-bg-soft);
+  border-top:1px solid var(--sa-border);
+  border-bottom:1px solid var(--sa-border);
+  font-size:13px;
+  color:var(--sa-text-dim);
+  overflow-x:auto;
+  white-space:nowrap;
+}
+.sa-ticker .sa-live-dot{
+  width:8px; height:8px; border-radius:50%;
+  background:var(--sa-red); display:inline-block; margin-right:6px;
+}
+.sa-ticker .bolt{ color:var(--sa-orange); margin-right:4px; }
+
+/* ---------- Upgrade banner ---------- */
+.sa-upgrade-card{
+  margin:16px;
+  padding:18px;
+  border-radius:var(--sa-radius-lg);
+  border:1.5px solid var(--sa-purple-soft);
+  background:linear-gradient(180deg, rgba(147,51,234,.08), rgba(147,51,234,.02));
+  position:relative;
+}
+.sa-upgrade-title{
+  color:#c084fc;
+  font-weight:700;
+  font-size:18px;
+  margin-bottom:6px;
+}
+.sa-upgrade-row{
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+}
+.sa-upgrade-text{
+  color:var(--sa-text-dim);
+  font-size:13px;
+  line-height:1.5;
+  max-width:70%;
+}
+.sa-upgrade-btn{
+  flex-shrink:0;
+  padding:10px 20px;
+  border-radius:var(--sa-radius-pill);
+  border:none;
+  background:linear-gradient(90deg, var(--sa-purple), var(--sa-purple-2));
+  color:#fff;
+  font-weight:700;
+  font-size:14px;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.sa-upgrade-toggle{
+  position:absolute;
+  bottom:-14px; left:50%; transform:translateX(-50%);
+  width:28px; height:28px;
+  border-radius:50%;
+  background:var(--sa-bg);
+  border:1.5px solid var(--sa-purple-soft);
+  display:flex; align-items:center; justify-content:center;
+  color:#c084fc;
+  cursor:pointer;
+}
+
+/* ---------- Icon grid (Question Bank, Practice, Mock Test, etc.) ---------- */
+.sa-icon-grid{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:18px 8px;
+  padding:28px 16px 8px;
+}
+.sa-icon-item{
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  color:var(--sa-text-dim);
+  text-decoration:none;
+}
+.sa-icon-item .sa-icon-box{
+  width:56px; height:56px;
+  border-radius:var(--sa-radius-md);
+  background:var(--sa-card);
+  border:1px solid var(--sa-border);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--sa-text);
+}
+.sa-icon-item .sa-icon-box svg{ width:24px; height:24px; }
+.sa-icon-item span{ font-size:12.5px; text-align:center; }
+
+/* ---------- Streak card ---------- */
+.sa-streak-card{
+  margin:16px;
+  padding:18px;
+  border-radius:var(--sa-radius-lg);
+  background:var(--sa-card);
+  border:1px solid var(--sa-border);
+}
+.sa-streak-top{ display:flex; align-items:center; gap:12px; margin-bottom:6px; }
+.sa-streak-fire{ font-size:26px; }
+.sa-streak-label{ color:var(--sa-text-dim); font-size:15px; }
+.sa-streak-count{
+  display:flex; align-items:baseline; gap:6px;
+  font-size:26px; font-weight:800; color:var(--sa-orange);
+  margin:2px 0 10px 38px;
+}
+.sa-streak-count span{ font-size:14px; font-weight:600; color:var(--sa-text-dim); }
+.sa-streak-hint{ font-size:14px; color:#d4d4d8; margin-left:38px; }
+
+/* ---------- Study stats ---------- */
+.sa-stats-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:8px 16px;
+}
+.sa-stats-header h4{ font-size:14px; color:var(--sa-text-dim); font-weight:600; }
+.sa-tab-group{ display:flex; gap:6px; }
+.sa-tab{
+  padding:5px 12px;
+  border-radius:var(--sa-radius-pill);
+  font-size:12.5px;
+  font-weight:700;
+  color:var(--sa-text-dim);
+  background:transparent;
+  border:1px solid var(--sa-border);
+}
+.sa-tab.active{
+  background:var(--sa-green);
+  color:#06210f;
+  border-color:var(--sa-green);
+}
+
+.sa-stats-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  padding:8px 16px 16px;
+}
+.sa-stat-card{
+  background:var(--sa-card);
+  border:1px solid var(--sa-border);
+  border-radius:var(--sa-radius-md);
+  padding:16px;
+}
+.sa-stat-card-head{
+  display:flex; align-items:center; justify-content:space-between;
+  color:var(--sa-text-dim);
+  font-size:12.5px;
+  font-weight:700;
+  letter-spacing:.04em;
+  margin-bottom:18px;
+}
+.sa-stat-card-head a{ color:var(--sa-blue); }
+.sa-stat-value{ font-size:26px; font-weight:800; }
+
+.sa-accuracy-ring{
+  position:relative;
+  width:120px; height:120px;
+  margin:0 auto;
+}
+.sa-accuracy-ring svg{ transform:rotate(-90deg); }
+.sa-accuracy-ring .track{ stroke:#2c2c32; fill:none; stroke-width:10; }
+.sa-accuracy-ring .progress{ stroke:var(--sa-green); fill:none; stroke-width:10; stroke-linecap:round; }
+.sa-accuracy-value{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px; font-weight:800;
+}
+
+/* ---------- Floating chat button ---------- */
+.sa-chat-fab{
+  position:fixed; right:18px; bottom:96px;
+  width:54px; height:54px; border-radius:50%;
+  background:var(--sa-green);
+  display:flex; align-items:center; justify-content:center;
+  color:#fff;
+  box-shadow:0 6px 18px rgba(34,197,94,.4);
+  z-index:40;
+}
+
+/* ---------- Bottom navigation ---------- */
+.sa-bottom-nav{
+  position:fixed; left:0; right:0; bottom:0;
+  display:flex; align-items:center; justify-content:space-around;
+  background:var(--sa-bg-soft);
+  border-top:1px solid var(--sa-border);
+  padding:8px 4px calc(8px + env(safe-area-inset-bottom));
+  z-index:50;
+}
+.sa-nav-item{
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  color:var(--sa-text-muted);
+  font-size:11.5px;
+  text-decoration:none;
+  flex:1;
+}
+.sa-nav-item.active{ color:var(--sa-text); }
+.sa-nav-item svg{ width:22px; height:22px; }
+
+.sa-nav-home{
+  position:relative; top:-22px;
+  width:58px; height:58px;
+  border-radius:50%;
+  background:var(--sa-green);
+  display:flex; align-items:center; justify-content:center;
+  border:4px solid var(--sa-bg-soft);
+  box-shadow:0 0 0 2px var(--sa-green);
+  color:#06210f;
+}
+.sa-nav-home svg{ width:24px; height:24px; }
+
+/* ---------- Responsive (desktop preview) ---------- */
+@media (min-width:600px){
+  .sa-dashboard{ max-width:480px; margin:0 auto; border-left:1px solid var(--sa-border); border-right:1px solid var(--sa-border); }
+}
