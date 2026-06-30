@@ -1,5 +1,13 @@
 require('dotenv').config();
 const express = require('express');
+// MUST be required right after express, before any routes are defined/used.
+// Patches Express so that if an async route handler's promise rejects (e.g. a
+// failed db.query that nobody wrapped in try/catch), the error is automatically
+// forwarded to the error-handling middleware below — instead of the request
+// just hanging forever with no response, which is what shows up in the browser
+// as "ERR_CONNECTION_CLOSED" (the connection eventually times out with nothing
+// ever sent back).
+require('express-async-errors');
 const session = require('express-session');
 const flash = require('connect-flash');
 const methodOverride = require('method-override');
