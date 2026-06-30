@@ -6,6 +6,20 @@ const methodOverride = require('method-override');
 const path = require('path');
 const fs = require('fs');
 
+// =============================================
+// CRASH SAFETY NET
+// Without this, a single failed DB query in any async route handler (one that
+// isn't wrapped in try/catch) becomes an "unhandled promise rejection" — and
+// on modern Node.js that TERMINATES THE ENTIRE PROCESS, taking the whole site
+// down for every user until the host restarts it. We log instead of crashing
+// so one bad query can't bring down the platform.
+process.on('unhandledRejection', (reason) => {
+  console.error('⚠️  Unhandled Promise Rejection (server kept running):', reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('⚠️  Uncaught Exception (server kept running):', err);
+});
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
