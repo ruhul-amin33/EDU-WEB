@@ -17,17 +17,19 @@
         <form action="/teacher/questions/<%= question.id %>/edit" method="POST">
           <div class="form-group">
             <label class="form-label">Question Text (English) *</label>
-            <textarea name="question_text" class="form-control" rows="3" required><%= question.question_text %></textarea>
+            <textarea name="question_text" id="editQuestionTextInput" class="form-control math-input" rows="3" required><%= question.question_text %></textarea>
+            <%- include('../partials/math-toolbar', { target: 'editQuestionTextInput' }) %>
           </div>
           <div class="form-group">
             <label class="form-label">Question Text (Bangla)</label>
-            <textarea name="question_text_bn" class="form-control" rows="3"><%= question.question_text_bn||'' %></textarea>
+            <textarea name="question_text_bn" id="editQuestionTextBnInput" class="form-control math-input" rows="3"><%= question.question_text_bn||'' %></textarea>
+            <%- include('../partials/math-toolbar', { target: 'editQuestionTextBnInput' }) %>
           </div>
           <div class="divider"></div>
           <% ['A','B','C','D'].forEach(opt => { %>
           <div class="form-group">
             <label class="form-label">Option <%= opt %></label>
-            <input type="text" name="option_<%= opt.toLowerCase() %>" class="form-control" required value="<%= question['option_'+opt.toLowerCase()]||'' %>">
+            <input type="text" name="option_<%= opt.toLowerCase() %>" class="form-control" required value="<%= question['option_'+opt.toLowerCase()]||'' %>" placeholder="math equations: wrap in $...$, e.g. $x^2$">
           </div>
           <% }) %>
           <div class="form-group">
@@ -71,11 +73,13 @@
           </div>
           <div class="form-group">
             <label class="form-label">Explanation (English)</label>
-            <textarea name="explanation" class="form-control" rows="3"><%= question.explanation||'' %></textarea>
+            <textarea name="explanation" id="editExplanationInput" class="form-control math-input" rows="3"><%= question.explanation||'' %></textarea>
+            <%- include('../partials/math-toolbar', { target: 'editExplanationInput' }) %>
           </div>
           <div class="form-group">
             <label class="form-label">Explanation (Bangla)</label>
-            <textarea name="explanation_bn" class="form-control" rows="3"><%= question.explanation_bn||'' %></textarea>
+            <textarea name="explanation_bn" id="editExplanationBnInput" class="form-control math-input" rows="3"><%= question.explanation_bn||'' %></textarea>
+            <%- include('../partials/math-toolbar', { target: 'editExplanationBnInput' }) %>
           </div>
           <div style="display:flex;gap:1rem;">
             <button type="submit" class="btn btn-primary btn-lg">📤 Update & Resubmit</button>
