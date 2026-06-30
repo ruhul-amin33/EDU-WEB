@@ -60,6 +60,34 @@
   </div>
 </footer>
 
+<!-- KaTeX: must load before main.js so main.js can call renderMathInElement -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
 <script src="/js/main.js"></script>
+<script>
+// Render any $...$, $$...$$, \(...\), \[...\] math found anywhere on the page (question text, options, explanations, etc.)
+(function () {
+  function renderPageMath() {
+    if (typeof renderMathInElement !== 'function') return;
+    try {
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false },
+          { left: '\\(', right: '\\)', display: false },
+          { left: '\\[', right: '\\]', display: true }
+        ],
+        throwOnError: false
+      });
+    } catch (e) { /* don't break the page if a malformed equation slips through */ }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderPageMath);
+  } else {
+    renderPageMath();
+  }
+  window.renderPageMath = renderPageMath;
+})();
+</script>
 </body>
 </html>
