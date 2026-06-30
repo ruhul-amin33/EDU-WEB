@@ -1,0 +1,66 @@
+<%
+/*
+  Usage: include this partial with a `target` var matching the id of the
+  textarea this toolbar should insert into. Add class="math-input" to that
+  textarea so KaTeX preview + cursor-insert works.
+*/
+%>
+<div class="math-toolbar" data-target="<%= target %>">
+  <div class="math-toolbar-head">
+    <span>🧮 <%= typeof lang!=='undefined' && lang==='bn' ? 'গণিত চিহ্ন ও সমীকরণ' : 'Math Symbols & Equations' %></span>
+    <button type="button" class="math-toggle-preview" data-target="<%= target %>"><%= typeof lang!=='undefined' && lang==='bn' ? '👁️ প্রিভিউ' : '👁️ Preview' %></button>
+  </div>
+
+  <div class="math-toolbar-row">
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="×" title="Multiply">×</button>
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="÷" title="Divide">÷</button>
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="±" title="Plus-minus">±</button>
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="≤" title="Less than or equal">≤</button>
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="≥" title="Greater than or equal">≥</button>
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="≠" title="Not equal">≠</button>
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="≈" title="Approximately">≈</button>
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="∞" title="Infinity">∞</button>
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="°" title="Degree">°</button>
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="→" title="Arrow">→</button>
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="∴" title="Therefore">∴</button>
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="∵" title="Because">∵</button>
+  </div>
+
+  <div class="math-toolbar-row">
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="α">α</button>
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="β">β</button>
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="θ">θ</button>
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="λ">λ</button>
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="μ">μ</button>
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="π">π</button>
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="Δ">Δ</button>
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="Σ">Σ</button>
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="Ω">Ω</button>
+    <button type="button" class="math-btn" data-target="<%= target %>" data-insert="∝">∝</button>
+  </div>
+
+  <div class="math-toolbar-row">
+    <button type="button" class="math-btn math-btn-eq" data-target="<%= target %>" data-latex="\frac{a}{b}" data-select="a" title="Fraction">a/b</button>
+    <button type="button" class="math-btn math-btn-eq" data-target="<%= target %>" data-latex="x^{n}" data-select="n" title="Power / Exponent">xⁿ</button>
+    <button type="button" class="math-btn math-btn-eq" data-target="<%= target %>" data-latex="x_{n}" data-select="n" title="Subscript">xₙ</button>
+    <button type="button" class="math-btn math-btn-eq" data-target="<%= target %>" data-latex="\sqrt{x}" data-select="x" title="Square root">√x</button>
+    <button type="button" class="math-btn math-btn-eq" data-target="<%= target %>" data-latex="\sqrt[n]{x}" data-select="n" title="Nth root">ⁿ√x</button>
+    <button type="button" class="math-btn math-btn-eq" data-target="<%= target %>" data-latex="\sum_{i=1}^{n}" data-select="n" title="Summation">Σ</button>
+    <button type="button" class="math-btn math-btn-eq" data-target="<%= target %>" data-latex="\int_{a}^{b}" data-select="b" title="Integral">∫</button>
+    <button type="button" class="math-btn math-btn-eq" data-target="<%= target %>" data-latex="\lim_{x \to 0}" data-select="0" title="Limit">lim</button>
+    <button type="button" class="math-btn math-btn-eq" data-target="<%= target %>" data-latex="\sin(x)" data-select="x" title="Sine">sin</button>
+    <button type="button" class="math-btn math-btn-eq" data-target="<%= target %>" data-latex="\cos(x)" data-select="x" title="Cosine">cos</button>
+    <button type="button" class="math-btn math-btn-eq" data-target="<%= target %>" data-latex="\tan(x)" data-select="x" title="Tangent">tan</button>
+    <button type="button" class="math-btn math-btn-eq" data-target="<%= target %>" data-latex="\log_{b}(x)" data-select="b" title="Logarithm">log</button>
+    <button type="button" class="math-btn math-btn-eq" data-target="<%= target %>" data-latex="\binom{n}{k}" data-select="n" title="Binomial / nCr">nCr</button>
+    <button type="button" class="math-btn math-btn-eq" data-target="<%= target %>" data-latex="\begin{matrix} a & b \\ c & d \end{matrix}" data-select="a" title="Matrix">[ ]</button>
+  </div>
+
+  <div class="math-toolbar-hint">
+    <%= typeof lang!=='undefined' && lang==='bn'
+      ? '💡 জটিল সমীকরণ লিখতে $ চিহ্নের মাঝে লিখুন, যেমন: $x^2 + y^2 = z^2$ — এটি সব জায়গায় সুন্দর সমীকরণ আকারে দেখাবে।'
+      : '💡 Wrap equations in $ ... $ — e.g. type <code>$x^2 + y^2 = z^2$</code> and it renders as a proper equation everywhere this question appears.' %>
+  </div>
+
+  <div class="math-preview" id="<%= target %>_preview" style="display:none;"></div>
+</div>
