@@ -105,13 +105,29 @@ function storedFileRef(file) {
 
 // Dashboard
 router.get('/', isAdmin, async (req, res) => {
-  const [[users]] = await db.query('SELECT COUNT(*) as c FROM users WHERE role="student"');
-  const [[questions]] = await db.query('SELECT COUNT(*) as c FROM questions WHERE status="pending"');
-  const [[courses]] = await db.query('SELECT COUNT(*) as c FROM courses');
-  const [[materials]] = await db.query('SELECT COUNT(*) as c FROM study_materials');
-  const [[purchases]] = await db.query('SELECT COUNT(*) as c FROM course_purchases WHERE status="pending"');
-  const [[reviews]] = await db.query('SELECT COUNT(*) as c FROM reviews WHERE is_approved=0');
-  res.render('admin/dashboard', { pageTitle: 'Admin Dashboard', stats: { users: users.c, pendingQ: questions.c, courses: courses.c, materials: materials.c, pendingPurchases: purchases.c, pendingReviews: reviews.c } });
+  // Each count is independent — if one query fails (e.g. a column/table
+  // mismatch after a migration), the rest of the dashboard still loads
+  // instead of the whole page (or the server) crashing.
+  async function safeCount(sql) {
+    try {
+      const [[row]] = await db.query(sql);
+      return row.c;
+    } catch (err) {
+      console.error('Admin dashboard count query failed:', sql, err.message);
+      return 0;
+    }
+  }
+
+  const [users, questions, courses, materials, purchases, reviews] = await Promise.all([
+    safeCount('SELECT COUNT(*) as c FROM users WHERE role="student"'),
+    safeCount('SELECT COUNT(*) as c FROM questions WHERE status="pending"'),
+    safeCount('SELECT COUNT(*) as c FROM courses'),
+    safeCount('SELECT COUNT(*) as c FROM study_materials'),
+    safeCount('SELECT COUNT(*) as c FROM course_purchases WHERE status="pending"'),
+    safeCount('SELECT COUNT(*) as c FROM reviews WHERE is_approved=0')
+  ]);
+
+  res.render('admin/dashboard', { pageTitle: 'Admin Dashboard', stats: { users, pendingQ: questions, courses, materials, pendingPurchases: purchases, pendingReviews: reviews } });
 });
 
 // ---- MATERIAL MANAGER (folder tree, free-form names) ----
