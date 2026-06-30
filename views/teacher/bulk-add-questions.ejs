@@ -42,6 +42,11 @@ Answer: B
             ? '* Q:, Answer:, Explanation:, Chapter:, Year:, Board: — এই লেবেলগুলো ছাড়া বাকি সব লেখা প্রশ্নের অংশ হিসেবে ধরা হবে। Explanation, Chapter, Year, Board ঐচ্ছিক — না লিখলেও চলবে।'
             : '* Only "Q:", "Answer:", "Explanation:", "Chapter:", "Year:", "Board:" are special labels — everything else becomes part of the question text. Explanation, Chapter, Year, and Board are optional.' %>
         </div>
+        <div style="font-size:.78rem;color:var(--text3);margin-top:.35rem;">
+          <%= lang==='bn'
+            ? '🧮 গণিত সমীকরণ লিখতে $ চিহ্নের মাঝে লিখুন, যেমন: $x^2 + y^2 = z^2$ — প্রশ্ন, অপশন বা ব্যাখ্যা যেকোনো জায়গায় ব্যবহার করা যাবে।'
+            : '🧮 For math equations, wrap them in $ ... $ — e.g. <code>$x^2 + y^2 = z^2$</code>. Works inside the question, any option, or the explanation.' %>
+        </div>
       </div>
 
       <div class="table-wrap" style="padding:2rem;">
@@ -86,7 +91,7 @@ Answer: B
 
           <div class="form-group">
             <label class="form-label">📝 <%= lang==='bn'?'প্রশ্নগুলো এখানে টাইপ/পেস্ট করুন':'Paste your questions here' %> *</label>
-            <textarea name="raw_text" id="bulkTextarea" class="form-control" rows="16" required style="font-family:monospace;font-size:.85rem;" placeholder="Q: ...
+            <textarea name="raw_text" id="bulkTextarea" class="form-control math-input" rows="16" required style="font-family:monospace;font-size:.85rem;" placeholder="Q: ...
 A) ...
 B) ...
 C) ...
@@ -94,6 +99,7 @@ D) ...
 Answer: B
 ---
 Q: ..."></textarea>
+            <%- include('../partials/math-toolbar', { target: 'bulkTextarea' }) %>
             <div style="font-size:.78rem;color:var(--text3);margin-top:.4rem;" id="blockCounter"><%= lang==='bn'?'প্রশ্ন পাওয়া গেছে':'Questions detected' %>: 0</div>
           </div>
 
