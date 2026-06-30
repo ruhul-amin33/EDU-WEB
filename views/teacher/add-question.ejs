@@ -14,12 +14,14 @@
         <form action="/teacher/questions/add" method="POST">
           <div class="form-group">
             <label class="form-label"><%= lang==='bn'?'প্রশ্ন (ইংরেজি)':'Question Text (English)' %> *</label>
-            <textarea name="question_text" id="questionTextInput" class="form-control" rows="3" required placeholder="Type the question here..."></textarea>
+            <textarea name="question_text" id="questionTextInput" class="form-control math-input" rows="3" required placeholder="Type the question here..."></textarea>
+            <%- include('../partials/math-toolbar', { target: 'questionTextInput' }) %>
             <div id="dupWarning" style="display:none;margin-top:.6rem;padding:.75rem 1rem;border-radius:8px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:var(--warning);font-size:.85rem;line-height:1.6;"></div>
           </div>
           <div class="form-group">
             <label class="form-label"><%= lang==='bn'?'প্রশ্ন (বাংলা, ঐচ্ছিক)':'Question Text (Bangla, optional)' %></label>
-            <textarea name="question_text_bn" class="form-control" rows="3" placeholder="বাংলায় প্রশ্ন লিখুন..."></textarea>
+            <textarea name="question_text_bn" id="questionTextBnInput" class="form-control math-input" rows="3" placeholder="বাংলায় প্রশ্ন লিখুন..."></textarea>
+            <%- include('../partials/math-toolbar', { target: 'questionTextBnInput' }) %>
           </div>
 
           <div class="divider"></div>
@@ -28,7 +30,7 @@
           <% ['A','B','C','D'].forEach(opt => { %>
           <div class="form-group">
             <label class="form-label"><%= lang==='bn'?'অপশন':'Option' %> <%= opt %></label>
-            <input type="text" name="option_<%= opt.toLowerCase() %>" class="form-control" required placeholder="Option <%= opt %>...">
+            <input type="text" name="option_<%= opt.toLowerCase() %>" class="form-control" required placeholder="Option <%= opt %>... (math equations: wrap in $...$, e.g. $x^2$)">
           </div>
           <% }) %>
 
@@ -97,11 +99,13 @@
           <div class="divider"></div>
           <div class="form-group">
             <label class="form-label">💡 <%= lang==='bn'?'ব্যাখ্যা (ইংরেজি)':'Explanation (English)' %></label>
-            <textarea name="explanation" class="form-control" rows="3" placeholder="Explain why this answer is correct..."></textarea>
+            <textarea name="explanation" id="explanationInput" class="form-control math-input" rows="3" placeholder="Explain why this answer is correct..."></textarea>
+            <%- include('../partials/math-toolbar', { target: 'explanationInput' }) %>
           </div>
           <div class="form-group">
             <label class="form-label">💡 <%= lang==='bn'?'ব্যাখ্যা (বাংলা)':'Explanation (Bangla)' %></label>
-            <textarea name="explanation_bn" class="form-control" rows="3" placeholder="বাংলায় ব্যাখ্যা লিখুন..."></textarea>
+            <textarea name="explanation_bn" id="explanationBnInput" class="form-control math-input" rows="3" placeholder="বাংলায় ব্যাখ্যা লিখুন..."></textarea>
+            <%- include('../partials/math-toolbar', { target: 'explanationBnInput' }) %>
           </div>
 
           <button type="submit" class="btn btn-primary btn-block btn-lg">
