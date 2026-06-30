@@ -257,3 +257,90 @@ document.addEventListener('DOMContentLoaded', () => {
 window.openModal=openModal; window.closeModal=closeModal;
 window.ExamUI=ExamUI; window.ExamTimer=ExamTimer;
 window.purchaseCourse=purchaseCourse; window.reportQuestion=reportQuestion;
+
+// ==================== MATH TOOLBAR (symbols + LaTeX equations) ====================
+// Lets teachers insert math symbols/equations into any textarea with class "math-input".
+// Equations wrapped in $...$ are rendered as real math (via KaTeX) everywhere the
+// question/option/explanation is later displayed (exam pages, admin review, etc).
+const MathToolbar = (() => {
+  function insertAtCursor(el, text, selectOffset, selectLen) {
+    if (!el) return;
+    const start = el.selectionStart != null ? el.selectionStart : el.value.length;
+    const end = el.selectionEnd != null ? el.selectionEnd : el.value.length;
+    const before = el.value.slice(0, start);
+    const after = el.value.slice(end);
+    el.value = before + text + after;
+    el.focus();
+    let caret = start + text.length;
+    if (selectOffset != null) {
+      el.setSelectionRange(start + selectOffset, start + selectOffset + (selectLen || 0));
+    } else {
+      el.setSelectionRange(caret, caret);
+    }
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  function renderPreview(targetId) {
+    const input = document.getElementById(targetId);
+    const preview = document.getElementById(targetId + '_preview');
+    if (!input || !preview || preview.style.display === 'none') return;
+    preview.textContent = input.value || '—';
+    if (typeof renderMathInElement === 'function') {
+      try {
+        renderMathInElement(preview, {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '$', right: '$', display: false },
+            { left: '\\(', right: '\\)', display: false },
+            { left: '\\[', right: '\\]', display: true }
+          ],
+          throwOnError: false
+        });
+      } catch (e) { /* ignore malformed equation while typing */ }
+    }
+  }
+
+  function init() {
+    // Symbol / equation buttons
+    document.addEventListener('click', (e) => {
+      const previewBtn = e.target.closest('.math-toggle-preview');
+      if (previewBtn) {
+        const targetId = previewBtn.dataset.target;
+        const preview = document.getElementById(targetId + '_preview');
+        if (preview) {
+          const showing = preview.style.display !== 'none';
+          preview.style.display = showing ? 'none' : 'block';
+          if (!showing) renderPreview(targetId);
+        }
+        return;
+      }
+      const btn = e.target.closest('.math-btn');
+      if (!btn) return;
+      const target = document.getElementById(btn.dataset.target);
+      if (!target) return;
+      if (btn.dataset.insert) {
+        insertAtCursor(target, btn.dataset.insert);
+      } else if (btn.dataset.latex) {
+        const latex = '$' + btn.dataset.latex + '$';
+        let selOffset = null, selLen = 0;
+        if (btn.dataset.select) {
+          const idx = latex.indexOf(btn.dataset.select);
+          if (idx >= 0) { selOffset = idx; selLen = btn.dataset.select.length; }
+        }
+        insertAtCursor(target, latex, selOffset, selLen);
+      }
+      renderPreview(btn.dataset.target);
+    });
+
+    // Live preview while typing
+    document.addEventListener('input', (e) => {
+      if (e.target && e.target.classList && e.target.classList.contains('math-input')) {
+        renderPreview(e.target.id);
+      }
+    });
+  }
+
+  return { init };
+})();
+
+document.addEventListener('DOMContentLoaded', () => MathToolbar.init());
