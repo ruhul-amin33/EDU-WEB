@@ -1189,3 +1189,77 @@ tr:hover td{background:var(--bg3);}
 
 /* Also hide the old nav-links class anywhere it still appears */
 .nav-links { display: none !important; }
+
+/* ==================== MATH TOOLBAR (symbols + equations) ==================== */
+.math-toolbar {
+  margin: 0.5rem 0 1rem;
+  padding: 0.85rem 1rem;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.math-toolbar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--text2);
+  margin-bottom: 0.6rem;
+}
+.math-toggle-preview {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  border-radius: 8px;
+  padding: 0.25rem 0.6rem;
+  font-size: var(--fs-xs);
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.math-toggle-preview:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+.math-toolbar-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+.math-btn {
+  min-width: 2.1rem;
+  height: 2.1rem;
+  padding: 0 0.5rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.math-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); transform: translateY(-1px); }
+.math-btn-eq { font-size: var(--fs-xs); font-weight: 600; padding: 0 0.6rem; }
+.math-toolbar-hint {
+  font-size: var(--fs-xs);
+  color: var(--text3);
+  line-height: 1.6;
+  margin-top: 0.3rem;
+}
+.math-toolbar-hint code {
+  background: var(--bg);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  color: var(--primary);
+}
+.math-preview {
+  margin-top: 0.7rem;
+  padding: 0.75rem 1rem;
+  background: var(--card-bg);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  font-size: var(--fs-md);
+  color: var(--text);
+  line-height: var(--lh-normal);
+  white-space: pre-wrap;
+}
+/* Make sure KaTeX equations don't overflow on small screens */
+.katex-display { overflow-x: auto; overflow-y: hidden; }
