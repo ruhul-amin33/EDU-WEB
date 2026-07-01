@@ -27,9 +27,23 @@ CREATE TABLE IF NOT EXISTS users (
   hsc_session VARCHAR(20) DEFAULT NULL COMMENT 'HSC batch year for admission candidates, e.g. 2025, 2026',
   avatar VARCHAR(255) DEFAULT NULL,
   is_verified TINYINT(1) DEFAULT 0,
+  xp INT NOT NULL DEFAULT 0 COMMENT 'Gamification points, shown on the student dashboard',
+  current_streak INT NOT NULL DEFAULT 0 COMMENT 'Consecutive days of activity',
+  longest_streak INT NOT NULL DEFAULT 0,
+  last_active_date DATE DEFAULT NULL COMMENT 'Last calendar day the streak was counted',
   reset_token VARCHAR(255) DEFAULT NULL,
   reset_expires DATETIME DEFAULT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Daily study-time tracking (powers the "Study Time" stat on the student dashboard)
+CREATE TABLE IF NOT EXISTS study_sessions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  study_date DATE NOT NULL,
+  seconds INT NOT NULL DEFAULT 0,
+  UNIQUE KEY user_date (user_id, study_date),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- PDF categories

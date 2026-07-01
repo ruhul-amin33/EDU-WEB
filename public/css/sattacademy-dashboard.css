@@ -80,6 +80,11 @@
   width:36px; height:36px; border-radius:50%;
   background:#3a3a40; object-fit:cover;
 }
+.sa-avatar-fallback{
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-weight:700; font-size:14px;
+  background:linear-gradient(135deg, var(--sa-purple), var(--sa-purple-2));
+}
 
 /* ---------- Notification ticker ---------- */
 .sa-ticker{
@@ -293,4 +298,11 @@
 /* ---------- Responsive (desktop preview) ---------- */
 @media (min-width:600px){
   .sa-dashboard{ max-width:480px; margin:0 auto; border-left:1px solid var(--sa-border); border-right:1px solid var(--sa-border); }
+}
+
+/* On desktop the classic sidebar layout takes over — hide the phone-style
+   bottom nav & floating chat button so they don't stretch full width. */
+@media (min-width:769px){
+  .sa-bottom-nav, .sa-chat-fab{ display:none; }
+  .sa-dashboard{ padding-bottom:0; }
 }
